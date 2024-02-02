@@ -5,7 +5,10 @@ const bodyParser = require('body-parser')
 const { default: mongoose } = require('mongoose')
 const requestIp = require('request-ip')
 const path = require('path')
+const httpStatus = require('http-status')
+const sendResponse = require('./helpers/sendResponse')
 const mongoURI = process.env.MONGODB_URI;
+
 const app = express()
 
 app.use(logger('dev'))
@@ -31,12 +34,7 @@ Promise.resolve(app)
 async function MongoDBConnection() {
     console.log(`| MongoDB URL  : ${mongoURI}`);
     await mongoose
-        .connect(mongoURI, {
-            useNewUrlParser: true,
-            useCreateIndex: true,
-            useUnifiedTopology: true,
-            useFindAndModify: false,
-        })
+        .connect(mongoURI)
         .then(() => {
             console.log('| MongoDB Connected');
             console.log('|--------------------------------------------');
@@ -54,6 +52,8 @@ app.use(function (req, res, next) {
 });
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
+const api_v1 = require('./routes/index');
+app.use('/api/v1', api_v1)
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');
