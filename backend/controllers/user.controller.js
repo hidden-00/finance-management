@@ -4,6 +4,7 @@ const User = require('../models/user.model');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const loginlogController = require('./loginlog.controller');
+const loginlogModel = require('../models/loginlog.model');
 const UserController = {}
 
 UserController.createOne = async(req, res, next)=>{
@@ -64,6 +65,21 @@ UserController.login = async(req, res, next)=>{
                 errors.password = 'Password incorrect';
                 return sendResponse(res, httpStatus.BAD_REQUEST, false, null, errors, errors.password, null);
             }
+        }
+    }catch(err){
+        next(err)
+    }
+}
+
+UserController.logout = async(req, res, next)=>{
+    try{
+        let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers.authorization || req.headers.token;
+        token = token.replace('Bearer ', '');
+        let inactiveLog = await loginlogModel.findOneAndUpdate({token}, {$set:{is_active: false, logout_date: Date.now()}});
+        if(inactiveLog){
+            return sendResponse(res, httpStatus.OK, true, null, null, 'Logged out', null);
+        }else{
+            return sendResponse(res, httpStatus.OK, false, null, null, 'Logged out', null);
         }
     }catch(err){
         next(err)
