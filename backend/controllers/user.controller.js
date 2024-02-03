@@ -20,7 +20,7 @@ UserController.createOne = async(req, res, next)=>{
 
 UserController.getAll = async(req, res, next)=>{
     try{
-        const listUser = await User.find();
+        const listUser = await User.find({},{password:0});
         return sendResponse(res, httpStatus.OK, true, listUser, null, 'get all user success', null);
     }catch(err){
         next(err)

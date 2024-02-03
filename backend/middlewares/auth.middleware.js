@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const useragent = require('useragent')
 const requestIp = require('request-ip');
 const sendResponse = require('../helpers/sendResponse');
+const loginlog = require('../models/loginlog.model')
 
 const auth = {}
 
@@ -14,7 +15,7 @@ auth.authentication = async(req, res, next)=>{
             const d = await jwt.verify(token, 'Mike22-11')
             req.user = d;
             //check loginlog
-            let passed = await loginLogSchema.findOne({ token, is_active: true });
+            let passed = await loginlog.findOne({ token, is_active: true });
             if(passed){
                 return next();
             }
