@@ -4,8 +4,8 @@ const AuthContext = createContext();
 
 const AuthProvider = ({children})=>{
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('site')||"")
-    const navigate = useNavigate()
+    const [token, setToken] = useState(localStorage.getItem('site')||"");
+    const navigate = useNavigate();
 
     useEffect(()=>{
         const fetchData = async () => {
@@ -29,7 +29,7 @@ const AuthProvider = ({children})=>{
             }
         };
     
-        fetchData(); // Gọi hàm async từ bên trong hàm useEffect
+        fetchData();
     },[])
 
     const loginAction = async(data)=>{
