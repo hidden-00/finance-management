@@ -1,10 +1,11 @@
 const { Navigate, Outlet } = require("react-router-dom");
 const { useAuth } = require("../provider/auth")
 
-const PrivateRoute = ({children})=>{
-    const user = useAuth();
-    if(!user.token) return <Navigate to='/login'/>
-    return children;
+const PrivateRoute = ()=>{
+    const auth = useAuth();
+    console.log(auth)
+    if(!auth.token) return <Navigate to='/login'/>
+    return <Outlet/>;
 }
 
 export default PrivateRoute;

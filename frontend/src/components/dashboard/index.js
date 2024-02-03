@@ -6,7 +6,7 @@ const Dashboard = () => {
   return (
     <div className="container">
       <div>
-        <h1>Welcome! {auth.user?.username}</h1>
+        <h1>Welcome! {auth.user?.email}</h1>
         <button onClick={() => auth.logOut()} className="btn-submit">
           logout
         </button>

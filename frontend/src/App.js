@@ -1,6 +1,6 @@
 import './App.css';
 import AuthProvider from './provider/auth';
-import { Route, Router, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Login from './components/login';
 import PrivateRoute from './routes/PrivateRoute';
 import Dashboard from './components/dashboard';
@@ -8,16 +8,17 @@ import Dashboard from './components/dashboard';
 function App() {
   return (
     <div className="App">
-      <Router>
+      <BrowserRouter>
         <AuthProvider>
           <Routes>
+            <Route path='/' element={<Navigate to={'/dashboard'}/>}/>
             <Route path="/login" element={<Login />} />
-            <Route path="/dashboard"  element={<PrivateRoute>
-              <Dashboard/>
-            </PrivateRoute>}/>
+            <Route element={<PrivateRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
           </Routes>
         </AuthProvider>
-      </Router>
+      </BrowserRouter>
     </div>
   );
 }

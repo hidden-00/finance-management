@@ -1,4 +1,4 @@
-import {useContext, createContext, useState} from 'react'
+import {useContext, createContext, useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
 const AuthContext = createContext();
 
@@ -6,6 +6,32 @@ const AuthProvider = ({children})=>{
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('site')||"")
     const navigate = useNavigate()
+
+    useEffect(()=>{
+        const fetchData = async () => {
+            try {
+                const response = await fetch("http://localhost:5050/api/v1/user/info", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": token
+                    }
+                });
+    
+                const res = await response.json();
+                if (res.success) {
+                    setUser(res.data);
+                } else {
+                    throw new Error(res.message);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+    
+        fetchData(); // Gọi hàm async từ bên trong hàm useEffect
+    },[])
+
     const loginAction = async(data)=>{
         try{
             const response = await fetch("http://localhost:5050/api/v1/user/login",{
@@ -16,9 +42,9 @@ const AuthProvider = ({children})=>{
                 body: JSON.stringify(data)
             })
             const res = await response.json()
-            if(res.data){
-                setUser(res.data.user);
-                setToken(res.token)
+            if(res.success){
+                setUser(res.data);
+                setToken(res.token);
                 localStorage.setItem("site", res.token)
                 navigate('/dashboard')
                 return;

@@ -27,6 +27,16 @@ UserController.getAll = async(req, res, next)=>{
     }
 }
 
+UserController.getMe = async(req, res, next)=>{
+    try{
+        const _id = req.user._id;
+        const me = await User.findById(_id,{password:0});
+        return sendResponse(res, httpStatus.OK, true, me, null, 'get me success', null);
+    }catch(err){
+        next(err);
+    }
+}
+
 UserController.login = async(req, res, next)=>{
     try{
         let errors = {};
