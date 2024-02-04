@@ -55,11 +55,25 @@ const AuthProvider = ({children})=>{
         }
     }
 
-    const logOut = ()=>{
-        setUser(null)
-        setToken('')
-        localStorage.removeItem('site')
-        navigate('/login')
+    const logOut = async()=>{
+        try{
+            const response = await fetch("http://localhost:5050/api/v1/user/logout",{
+                method:"POST",
+                headers:{
+                    "Content-Type": "application/json",
+                    "Authorization": token
+                },
+            })
+            const res = await response.json()
+            if(res.success){
+                setUser(null)
+                setToken('')
+                localStorage.removeItem('site')
+                navigate('/login')
+            }
+        }catch(err){
+            console.error(err);
+        }
     }
     return <AuthContext.Provider value={{token, user, loginAction, logOut}}>{children}</AuthContext.Provider>
 }

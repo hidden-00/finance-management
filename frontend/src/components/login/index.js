@@ -4,6 +4,7 @@ import Button from '@mui/material/Button'
 import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar';
 import { Box, Container, CssBaseline, TextField, ThemeProvider, Typography, createTheme } from '@mui/material';
+import {Helmet} from 'react-helmet'
 
 const theme = createTheme();
 
@@ -51,6 +52,9 @@ const Login = () => {
 
     return (
         <>
+            <Helmet>
+                <title>Login</title>
+            </Helmet>
             <ThemeProvider theme={theme}>
                 <Container component="main" maxWidth="xs">
                     <CssBaseline />
