@@ -13,7 +13,7 @@ UserController.createOne = async(req, res, next)=>{
         let hashPass = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
         const user = new User({email, password: hashPass, name});
         const save =  await User.create(user);
-        return sendResponse(res, httpStatus.OK, true, save, null, 'register success', null)
+        return sendResponse(res, httpStatus.OK, true, save, null, 'Đăng kí thành công', null)
     }catch(err){
         next(err);
     }
