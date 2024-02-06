@@ -8,6 +8,7 @@ const FinaceSchema = new schema({
     money:{type: Number, required: true},
     method:{type: String, required: true},
     place:{type:String, required: true},
+    user: {type: mongoose.Types.ObjectId, ref:'users', required: true}
 })
 
 module.exports = Finance = mongoose.model('finances', FinaceSchema);

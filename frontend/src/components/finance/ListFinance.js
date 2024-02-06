@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import { useEffect } from "react";
 import * as React from 'react';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
@@ -14,20 +14,35 @@ const ListFinance = () => {
     setForm(false);
   };
 
+  const types = [
+    { label: 'Lựa chọn 1', value: 'option1' },
+    { label: 'Lựa chọn 2', value: 'option2' },
+    { label: 'Lựa chọn 3', value: 'option3' },
+    // Thêm các lựa chọn khác nếu cần
+  ];
+
+  const methods = [
+    {label: 'Vietcombank', value: 'Vietcombank'},
+    {label: 'Timo', value: 'Timo'},
+    {label: 'Momo', value: 'Momo'},
+    {label: 'Tiền mặt', value: 'Tiền mặt'}
+  ]
+
   return (
     <>
       <TableContainer component={Paper} sx={{ mt: 2 }}>
-        <Button onClick={handleButtonAdd} variant="contained" startIcon={<LibraryAddIcon />} color="primary">
+        <Button sx={{m:2}} onClick={handleButtonAdd} variant="contained" startIcon={<LibraryAddIcon />} color="primary">
           Thêm
         </Button>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell>Dessert (100g serving)</TableCell>
-              <TableCell align="right">Calories</TableCell>
-              <TableCell align="right">Fat&nbsp;(g)</TableCell>
-              <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-              <TableCell align="right">Protein&nbsp;(g)</TableCell>
+              <TableCell>Tên chi tiêu</TableCell>
+              <TableCell align="right">Tên món hàng</TableCell>
+              <TableCell align="right">Loại mặt hàng</TableCell>
+              <TableCell align="right">Số tiền</TableCell>
+              <TableCell align="right">Phương thức giao dịch</TableCell>
+              <TableCell align="right">Địa điểm</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -51,8 +66,20 @@ const ListFinance = () => {
           <DialogTitle>Thêm mới chi tiêu</DialogTitle>
           <DialogContent>
             <form>
-              <TextField label="Field 1" fullWidth />
-              {/* Add more form fields as needed */}
+              <TextField sx={{m:1}} label="Tên chi tiêu" fullWidth />
+              <TextField sx={{m:1}} label="Tên món hàng" fullWidth/>
+              <Autocomplete
+              options={types}
+              sx={{m:1, mr:-1}}
+              getOptionLabel={(option) => option.label}
+               renderInput={(params) => <TextField {...params} label="Chọn loại hàng"/>}/>
+               <TextField sx={{m:1}} label="Số tiền" fullWidth/>
+               <Autocomplete
+              options={methods}
+              sx={{m:1, mr:-1}}
+              getOptionLabel={(option) => option.label}
+               renderInput={(params) => <TextField {...params} label="Chọn phương thức giao dịch"/>}/>
+               <TextField sx={{m:1}} label="Nơi giao dịch" fullWidth/>
             </form>
           </DialogContent>
           <DialogActions>
