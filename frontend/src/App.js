@@ -4,6 +4,8 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Login from './components/login';
 import PrivateRoute from './routes/PrivateRoute';
 import Dashboard from './components/dashboard';
+import Signin from './components/signin';
+import ListFinance from './components/finance/ListFinance';
 
 function App() {
   return (
@@ -13,8 +15,10 @@ function App() {
           <Routes>
             <Route path='/' element={<Navigate to={'/dashboard'}/>}/>
             <Route path="/login" element={<Login />} />
+            <Route path="/signin" element={<Signin />} />
             <Route element={<PrivateRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path='/finance' element={<ListFinance/>}/>
             </Route>
           </Routes>
         </AuthProvider>

@@ -55,6 +55,31 @@ const AuthProvider = ({children})=>{
         }
     }
 
+    const signinAction = async(data)=>{
+        try{
+            const response = await fetch("http://localhost:5050/api/v1/user",{
+                method:"POST",
+                headers:{
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            const res = await response.json()
+            if(res.success){
+                navigate('/login')
+                return res;
+            }else{
+                if(res.errors.keyPattern.email){
+                    res.message = "Email tồn tại"
+                    return res;
+                }
+            }
+            throw new Error(res.message);
+        }catch(err){
+            console.error(err);
+        }
+    }
+
     const logOut = async()=>{
         try{
             const response = await fetch("http://localhost:5050/api/v1/user/logout",{
@@ -71,11 +96,12 @@ const AuthProvider = ({children})=>{
                 localStorage.removeItem('site')
                 navigate('/login')
             }
+            throw new Error(res.message)
         }catch(err){
             console.error(err);
         }
     }
-    return <AuthContext.Provider value={{token, user, loginAction, logOut}}>{children}</AuthContext.Provider>
+    return <AuthContext.Provider value={{token, user, loginAction, logOut, signinAction}}>{children}</AuthContext.Provider>
 }
 
 export default AuthProvider;
