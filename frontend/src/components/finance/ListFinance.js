@@ -1,19 +1,37 @@
 import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import * as React from 'react';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import { useAuth } from "../../provider/auth";
 
 const ListFinance = () => {
   const [data, setData] = React.useState(null);
   const [form, setForm] = React.useState(false);
+  const auth = useAuth();
 
-  const getData = async()=>{
-
+  const getData = async () => {
+    try {
+      const response = await fetch('http://localhost:5050/api/v1/finance', {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        }
+      })
+      const res = await response.json();
+      if (res.success) {
+        setData(res.data);
+      } else {
+        throw new Error(res.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   }
 
-  React.useEffect(()=>{
-
+  React.useEffect(() => {
+    getData()
   })
-  
+
   const handleButtonAdd = () => {
     setForm(true);
   }
@@ -62,17 +80,17 @@ const ListFinance = () => {
     { label: 'Tiền mặt', value: 'Tiền mặt' }
   ]
 
-  const sendRequestInsert = async()=>{
-    try{
+  const sendRequestInsert = async () => {
+    try {
 
-    }catch(err){
+    } catch (err) {
       console.error(err);
     }
   }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({input, selectedType, selectedMethod})
+    console.log({ input, selectedType, selectedMethod })
   }
 
   return (
