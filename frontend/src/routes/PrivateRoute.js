@@ -5,7 +5,6 @@ const { useAuth } = require("../provider/auth")
 
 const PrivateRoute = ()=>{
     const auth = useAuth();
-    console.log(auth)
     if(!auth.token) return <Navigate to='/login'/>
     return (
         <>
