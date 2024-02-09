@@ -8,7 +8,8 @@ const FinaceSchema = new schema({
     money:{type: Number, required: true},
     method:{type: String, required: true},
     place:{type:String, required: true},
-    user: {type: mongoose.Types.ObjectId, ref:'users', required: true}
+    user: {type: mongoose.Types.ObjectId, ref:'users', required: true},
+    is_deleted: {type: Boolean, required: true, default: false},
 })
 
 module.exports = Finance = mongoose.model('finances', FinaceSchema);

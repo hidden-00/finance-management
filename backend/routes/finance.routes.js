@@ -5,5 +5,6 @@ const router = express.Router()
 
 router.get('/', auth.authentication, FinanceController.getList);
 router.post('/', auth.authentication, FinanceController.createOne);
+router.post('/delete/:id', auth.authentication, FinanceController.delete);
 
 module.exports = router
