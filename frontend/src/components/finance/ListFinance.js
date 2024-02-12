@@ -3,6 +3,7 @@ import * as React from 'react';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { useAuth } from "../../provider/auth";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { PieChart } from '@mui/x-charts/PieChart';
 
 const ListFinance = () => {
   const [data, setData] = React.useState(null);
@@ -15,8 +16,10 @@ const ListFinance = () => {
 
   const auth = useAuth();
 
-  const handleDeleteFinance = async(id)=>{
-    try{
+  let VND = new Intl.NumberFormat('en-US');
+
+  const handleDeleteFinance = async (id) => {
+    try {
       setDel(true)
       const response = await fetch(`http://localhost:5050/api/v1/finance/delete/${id}`, {
         method: "POST",
@@ -26,15 +29,15 @@ const ListFinance = () => {
         }
       })
       const res = await response.json();
-      if(res.success){
+      if (res.success) {
         setMessage(res.msg);
         setStatus('success');
         setDel(false)
         setOpen(true);
-      }else{
+      } else {
         throw new Error(res.message);
       }
-    }catch(err){
+    } catch (err) {
       console.error(err);
     }
   }
@@ -165,6 +168,19 @@ const ListFinance = () => {
   else
     return (
       <>
+        <PieChart
+          series={[
+            {
+              data: [
+                { id: 0, value: 10, label: 'series A' },
+                { id: 1, value: 15, label: 'series B' },
+                { id: 2, value: 20, label: 'series C' },
+              ],
+            },
+          ]}
+          width={400}
+          height={200}
+        />
         <TableContainer component={Paper} sx={{ mt: 2 }}>
           <Button sx={{ m: 2 }} onClick={handleButtonAdd} variant="contained" startIcon={<LibraryAddIcon />} color="primary">
             Thêm
@@ -192,13 +208,13 @@ const ListFinance = () => {
                   </TableCell>
                   <TableCell align="right">{row.mon_hang}</TableCell>
                   <TableCell align="right">{row.type}</TableCell>
-                  <TableCell align="right">{row.money}</TableCell>
+                  <TableCell align="right">{VND.format(row.money)}</TableCell>
                   <TableCell align="right">{row.method}</TableCell>
                   <TableCell align="right">{row.place}</TableCell>
                   <TableCell align="right">
-                  <DeleteForeverIcon onClick={()=>{
-                    handleDeleteFinance(row._id)
-                  }} />
+                    <DeleteForeverIcon onClick={() => {
+                      handleDeleteFinance(row._id)
+                    }} />
                   </TableCell>
                 </TableRow>
               ))}

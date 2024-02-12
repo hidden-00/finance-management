@@ -39,4 +39,20 @@ FinanceController.delete = async(req, res, next)=>{
     }
 }
 
+FinanceController.chart = async(req, res, next)=>{
+    try{
+
+    }catch(err){
+        next(err);
+    }
+}
+
+FinanceController.chartMonth = async(req, res, next)=>{
+    try{
+
+    }catch(err){
+        next(err);
+    }
+}
+
 module.exports = FinanceController;
