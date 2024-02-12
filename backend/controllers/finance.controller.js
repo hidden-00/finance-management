@@ -29,7 +29,7 @@ FinanceController.getList = async(req, res, next)=>{
 FinanceController.delete = async(req, res, next)=>{
     try{
         const id = req.params.id;
-        const finance = await financeModel.findOne({user: req.user.id, _id: id, is_deleted: false});
+        const finance = await financeModel.findOne({user: req.user._id, _id: id, is_deleted: false});
         if(finance){
             const newFinance = await financeModel.findByIdAndUpdate(id, {$set:{is_deleted: true}}, {new: true});
             return sendResponse(res, httpStatus.OK, true, newFinance, null, 'Update success', null);

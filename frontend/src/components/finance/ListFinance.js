@@ -7,20 +7,42 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 const ListFinance = () => {
   const [data, setData] = React.useState(null);
   const [form, setForm] = React.useState(false);
-  const auth = useAuth();
   const [load, setLoad] = React.useState(true);
-
+  const [del, setDel] = React.useState(false);
   const [message, setMessage] = React.useState('');
   const [status, setStatus] = React.useState('');
-
-
   const [open, setOpen] = React.useState(false);
+
+  const auth = useAuth();
+
+  const handleDeleteFinance = async(id)=>{
+    try{
+      setDel(true)
+      const response = await fetch(`http://localhost:5050/api/v1/finance/delete/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        }
+      })
+      const res = await response.json();
+      if(res.success){
+        setMessage(res.msg);
+        setStatus('success');
+        setDel(false)
+        setOpen(true);
+      }else{
+        throw new Error(res.message);
+      }
+    }catch(err){
+      console.error(err);
+    }
+  }
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setOpen(false);
   };
 
@@ -36,9 +58,6 @@ const ListFinance = () => {
       const res = await response.json();
       if (res.success) {
         setData(res.data);
-        setStatus('success');
-        setOpen(true)
-        setMessage(res.msg);
       } else {
         throw new Error(res.msg);
       }
@@ -52,7 +71,7 @@ const ListFinance = () => {
 
   React.useEffect(() => {
     getData()
-  }, [form])
+  }, [form, del])
 
   const handleButtonAdd = () => {
     setForm(true);
@@ -89,9 +108,9 @@ const ListFinance = () => {
   }
 
   const types = [
-    { label: 'Lựa chọn 1', value: 'option1' },
-    { label: 'Lựa chọn 2', value: 'option2' },
-    { label: 'Lựa chọn 3', value: 'option3' },
+    { label: 'Thu', value: 'Thu' },
+    { label: 'Chi', value: 'Chi' },
+    { label: 'Nợ', value: 'Nợ' },
     // Thêm các lựa chọn khác nếu cần
   ];
 
@@ -155,7 +174,7 @@ const ListFinance = () => {
               <TableRow>
                 <TableCell>Tên chi tiêu</TableCell>
                 <TableCell align="right">Tên món hàng</TableCell>
-                <TableCell align="right">Loại mặt hàng</TableCell>
+                <TableCell align="right">Loại</TableCell>
                 <TableCell align="right">Số tiền</TableCell>
                 <TableCell align="right">Phương thức giao dịch</TableCell>
                 <TableCell align="right">Địa điểm</TableCell>
@@ -177,7 +196,9 @@ const ListFinance = () => {
                   <TableCell align="right">{row.method}</TableCell>
                   <TableCell align="right">{row.place}</TableCell>
                   <TableCell align="right">
-                  <DeleteForeverIcon onClick={()=>console.log(row._id)} />
+                  <DeleteForeverIcon onClick={()=>{
+                    handleDeleteFinance(row._id)
+                  }} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -197,7 +218,7 @@ const ListFinance = () => {
                   isOptionEqualToValue={(option, value) => option.value === value.value}
                   sx={{ m: 1, mr: -1 }}
                   getOptionLabel={(option) => option.label}
-                  renderInput={(params) => <TextField {...params} label="Chọn loại hàng" />} />
+                  renderInput={(params) => <TextField {...params} label="Chọn loại" />} />
                 <TextField name="money" onChange={handleInput} sx={{ m: 1 }} label="Số tiền" fullWidth />
                 <Autocomplete
                   name="method"
@@ -228,8 +249,3 @@ const ListFinance = () => {
 }
 
 export default ListFinance;
-
-
-
-
-
