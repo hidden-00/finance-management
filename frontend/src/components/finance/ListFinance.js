@@ -7,6 +7,8 @@ import { PieChart } from '@mui/x-charts/PieChart';
 
 const ListFinance = () => {
   const [data, setData] = React.useState(null);
+  const [chart, setChart] = React.useState([]);
+  const [chart_all, setChart_all] = React.useState([]);
   const [form, setForm] = React.useState(false);
   const [load, setLoad] = React.useState(true);
   const [del, setDel] = React.useState(false);
@@ -72,8 +74,56 @@ const ListFinance = () => {
     }
   }
 
+  const get_chart_month = async () => {
+    try {
+      const response = await fetch('http://localhost:5050/api/v1/finance/month', {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        }
+      })
+      const res = await response.json();
+      if (res.success) {
+        setChart(res.data);
+      } else {
+        throw new Error(res.msg);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    finally {
+      setLoad(false)
+    }
+  }
+
+  const get_chart_all = async () => {
+    try {
+      const response = await fetch('http://localhost:5050/api/v1/finance/all', {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        }
+      })
+      const res = await response.json();
+      if (res.success) {
+        setChart_all(res.data);
+      } else {
+        throw new Error(res.msg);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    finally {
+      setLoad(false)
+    }
+  }
+
   React.useEffect(() => {
     getData()
+    get_chart_month()
+    get_chart_all()
   }, [form, del])
 
   const handleButtonAdd = () => {
@@ -168,19 +218,27 @@ const ListFinance = () => {
   else
     return (
       <>
-        <PieChart
+        <div style={{display:"flex"}}>
+          <PieChart
+            series={[
+              {
+                data: chart,
+              },
+            ]}
+            width={500}
+            height={200}
+          />
+          <PieChart
           series={[
             {
-              data: [
-                { id: 0, value: 10, label: 'series A' },
-                { id: 1, value: 15, label: 'series B' },
-                { id: 2, value: 20, label: 'series C' },
-              ],
+              data: chart_all,
             },
           ]}
-          width={400}
+          width={500}
           height={200}
         />
+        </div>
+
         <TableContainer component={Paper} sx={{ mt: 2 }}>
           <Button sx={{ m: 2 }} onClick={handleButtonAdd} variant="contained" startIcon={<LibraryAddIcon />} color="primary">
             Thêm
@@ -193,6 +251,7 @@ const ListFinance = () => {
                 <TableCell align="right">Loại</TableCell>
                 <TableCell align="right">Số tiền</TableCell>
                 <TableCell align="right">Phương thức giao dịch</TableCell>
+                <TableCell align="right">Thời gian</TableCell>
                 <TableCell align="right">Địa điểm</TableCell>
                 <TableCell align="right"></TableCell>
               </TableRow>
@@ -210,6 +269,7 @@ const ListFinance = () => {
                   <TableCell align="right">{row.type}</TableCell>
                   <TableCell align="right">{VND.format(row.money)}</TableCell>
                   <TableCell align="right">{row.method}</TableCell>
+                  <TableCell align="right">{row.date}</TableCell>
                   <TableCell align="right">{row.place}</TableCell>
                   <TableCell align="right">
                     <DeleteForeverIcon onClick={() => {

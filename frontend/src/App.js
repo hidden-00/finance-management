@@ -6,6 +6,7 @@ import PrivateRoute from './routes/PrivateRoute';
 import Dashboard from './components/dashboard';
 import Signin from './components/signin';
 import ListFinance from './components/finance/ListFinance';
+import Profile from './components/profile';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path='/finance' element={<ListFinance/>}/>
+              <Route path='/profile' element={<Profile/>}/>
             </Route>
           </Routes>
         </AuthProvider>
