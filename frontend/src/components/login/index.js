@@ -48,10 +48,6 @@ const Login = () => {
         } else {
             setOpen(true);
             setMessage('Nhập đủ thông tin')
-            const timeoutId = setTimeout(() => {
-                setOpen(false);
-            }, 3000);
-            return () => clearTimeout(timeoutId);
         }
     }
 
