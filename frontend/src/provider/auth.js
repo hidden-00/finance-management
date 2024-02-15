@@ -50,9 +50,8 @@ const AuthProvider = ({children})=>{
                 setToken(res.token);
                 localStorage.setItem("site", res.token)
                 navigate('/dashboard')
-                return;
             }
-            throw new Error(res.message);
+            return res;
         }catch(err){
             console.error(err);
         }

@@ -15,6 +15,7 @@ const Login = () => {
         email: "",
         password: "",
     })
+    const [message, setMessage] = useState('');
 
     const [open, setOpen] = useState(false);
 
@@ -38,10 +39,15 @@ const Login = () => {
     const handleSubmitEvent = async(e) => {
         e.preventDefault()
         if (input.email !== "" && input.password !== "") {
-            await auth.loginAction(input);
+            const res = await auth.loginAction(input);
+            if(!res.success){
+                setMessage(res.msg);
+                setOpen(true);
+            }
             return;
         } else {
             setOpen(true);
+            setMessage('Nhập đủ thông tin')
             const timeoutId = setTimeout(() => {
                 setOpen(false);
             }, 3000);
@@ -127,7 +133,7 @@ const Login = () => {
             </ThemeProvider>
             <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="warning">
-                    Nhập đủ thông tin
+                    {message}
                 </Alert>
             </Snackbar>
         </>
