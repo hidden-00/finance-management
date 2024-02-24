@@ -79,18 +79,6 @@ export default function Header() {
                                     <ListItemIcon><PaymentIcon /></ListItemIcon>
                                     <ListItemText primary="Expense management" />
                                 </ListItem>
-                                <ListItem button onClick={()=>{navigate('/note')}}>
-                                    <ListItemIcon><EventNoteIcon /></ListItemIcon>
-                                    <ListItemText primary="Note" />
-                                </ListItem>
-                                <ListItem button>
-                                    <ListItemIcon><ListAltIcon /></ListItemIcon>
-                                    <ListItemText primary="Task management" />
-                                </ListItem>
-                                <ListItem button>
-                                    <ListItemIcon><AccountBalanceIcon /></ListItemIcon>
-                                    <ListItemText primary="Account Bank" />
-                                </ListItem>
                                 {/* Add more items as needed */}
                             </List>
                         </Drawer>
