@@ -4,5 +4,7 @@ const groupController = require('../controllers/group.controller')
 const router = express.Router()
 
 router.post('/', auth.authentication, groupController.createOne);
+router.get('/list_name', auth.authentication, groupController.getNameList);
+router.get('/:id', auth.authentication, groupController.getFinance);
 
 module.exports = router
