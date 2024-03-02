@@ -5,6 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -22,6 +23,35 @@ export default function Header() {
     const auth = useAuth();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [drawerOpen, setDrawerOpen] = React.useState(false);
+    const [data, setData] = React.useState([]);
+    const [load, setLoad] = React.useState(false);
+
+    React.useEffect(() => {
+        fetchData();
+    }, [])
+
+    const fetchData = async () => {
+        try {
+            setLoad(true);
+            const response = await fetch('http://localhost:5050/api/v1/group/list_name', {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": auth.token
+                }
+            })
+            const res = await response.json();
+            if (res.success) {
+                setData(res.data.groups);
+            } else {
+                throw new Error(res.msg)
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoad(false);
+        }
+    }
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -38,7 +68,7 @@ export default function Header() {
     const handleDrawerClose = () => {
         setDrawerOpen(false);
     };
-
+    if (load) return <></>
     return (
         <>
             <Helmet>
@@ -65,7 +95,7 @@ export default function Header() {
                         >
                             <div>
                                 {/* Your logo or additional header content here */}
-                                <AppBar position="static" sx={{ marginBottom: 2 }} onClick={()=>{navigate('/dashboard')}}>
+                                <AppBar position="static" sx={{ marginBottom: 2 }} onClick={() => { navigate('/dashboard') }}>
                                     <Toolbar>
                                         <Typography variant="h6" noWrap component="div">
                                             {auth.user?.name}
@@ -74,16 +104,21 @@ export default function Header() {
                                 </AppBar>
                             </div>
                             <List>
-                                {/* Add your menu items here */}
-                                <ListItem button onClick={()=>{navigate('/finance')}}>
-                                    <ListItemIcon><PaymentIcon /></ListItemIcon>
-                                    <ListItemText primary="Expense management" />
+                                <ListItem button>
+                                    <ListItemIcon><LibraryAddIcon /></ListItemIcon>
+                                    <ListItemText primary="Add financial management team" />
                                 </ListItem>
-                                {/* Add more items as needed */}
+                                {data && data.map(group => (
+                                    <ListItem button onClick={() => { navigate('/finance') }}>
+                                        <ListItemIcon><PaymentIcon /></ListItemIcon>
+                                        <ListItemText primary={group.name} />
+                                    </ListItem>
+
+                                ))}
                             </List>
                         </Drawer>
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                            
+
                         </Typography>
                         <div>
                             <IconButton
@@ -111,8 +146,8 @@ export default function Header() {
                                 open={Boolean(anchorEl)}
                                 onClose={handleClose}
                             >
-                                <MenuItem onClick={()=>{navigate('/profile')}}>Profile</MenuItem>
-                                <MenuItem onClick={()=>{auth.logOut()}}>Logout</MenuItem>
+                                <MenuItem onClick={() => { navigate('/profile') }}>Profile</MenuItem>
+                                <MenuItem onClick={() => { auth.logOut() }}>Logout</MenuItem>
                             </Menu>
                         </div>
                     </Toolbar>
