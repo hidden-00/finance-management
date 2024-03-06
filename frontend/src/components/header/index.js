@@ -13,9 +13,6 @@ import { useAuth } from '../../provider/auth';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { Helmet } from 'react-helmet';
 import PaymentIcon from '@mui/icons-material/Payment';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
@@ -106,10 +103,10 @@ export default function Header() {
                             <List>
                                 <ListItem button>
                                     <ListItemIcon><LibraryAddIcon /></ListItemIcon>
-                                    <ListItemText primary="Add financial management team" />
+                                    <ListItemText primary="Add Group" />
                                 </ListItem>
                                 {data && data.map(group => (
-                                    <ListItem button onClick={() => { navigate('/finance') }}>
+                                    <ListItem button onClick={() => { navigate(`/finance/${group._id}`) }}>
                                         <ListItemIcon><PaymentIcon /></ListItemIcon>
                                         <ListItemText primary={group.name} />
                                     </ListItem>
