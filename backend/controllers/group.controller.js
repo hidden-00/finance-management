@@ -24,7 +24,8 @@ groupController.getNameList = async(req, res, next)=>{
         const id = req.user._id;
         const list_name = await userModel.findById(id, {groups:1}).populate({
             path:"groups",
-            select:"name"
+            select:"name",
+            match:{is_deleted: false}
         });
         return sendResponse(res, httpStatus.OK, true, list_name, null, 'Get List Success', null);
     }catch(err){
@@ -40,6 +41,23 @@ groupController.getFinance = async(req, res, next)=>{
             {path:"members", select:"email name"}
         ]);
         return sendResponse(res, httpStatus.OK, true, group, null, 'Get finance of Group success');
+    }catch(err){
+        next(err);
+    }
+}
+
+groupController.deleteGroup = async(req, res, next)=>{
+    try{
+        const id = req.params.id;
+        const group = await groupModel.findById(id);
+        if(!group){
+            return sendResponse(res, httpStatus.OK, false, null, null, 'Can not found Group!', null);
+        }
+        if(req.user._id!==group.leader) return sendResponse(res, httpStatus.UNAUTHORIZED, false, null, null, 'UNAUTHORIZED', null);
+        group.is_deleted = true;
+        await group.save();
+        return sendResponse(res, httpStatus.OK, true, group, null, 'Group has been deleted successfully!', null);
+
     }catch(err){
         next(err);
     }

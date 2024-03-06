@@ -4,6 +4,7 @@ import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { useAuth } from "../../provider/auth";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { PieChart } from '@mui/x-charts/PieChart';
+import AutoDeleteIcon from '@mui/icons-material/AutoDelete';
 
 const ListFinance = () => {
   const [data, setData] = React.useState(null);
@@ -242,6 +243,9 @@ const ListFinance = () => {
         <TableContainer component={Paper} sx={{ mt: 2 }}>
           <Button sx={{ m: 2 }} onClick={handleButtonAdd} variant="contained" startIcon={<LibraryAddIcon />} color="primary">
             Thêm
+          </Button>
+          <Button sx={{ m: 2, backgroundColor:"red"  }} onClick={handleButtonAdd} variant="contained" startIcon={<AutoDeleteIcon />} color="primary">
+            Delete Group
           </Button>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>

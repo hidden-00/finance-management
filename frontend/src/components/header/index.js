@@ -10,7 +10,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useAuth } from '../../provider/auth';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, List, ListItem, ListItemIcon, ListItemText, Snackbar, TextField } from '@mui/material';
 import { Helmet } from 'react-helmet';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { useNavigate } from 'react-router-dom';
@@ -22,10 +22,19 @@ export default function Header() {
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [data, setData] = React.useState([]);
     const [load, setLoad] = React.useState(false);
+    const [form, setForm] = React.useState(false);
+    const [input, setInput] = React.useState({
+        name: "",
+        description: ""
+    })
+    const [message, setMessage] = React.useState('');
+    const [status, setStatus] = React.useState('');
+    const [open, setOpen] = React.useState(false);
+    const [add, setAdd] = React.useState(false);
 
     React.useEffect(() => {
         fetchData();
-    }, [])
+    }, [add])
 
     const fetchData = async () => {
         try {
@@ -58,6 +67,17 @@ export default function Header() {
         setAnchorEl(null);
     };
 
+    const handleCloseMessage = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
+
+    const handleCloseForm = () => {
+        setForm(false);
+    };
+
     const handleDrawerOpen = () => {
         setDrawerOpen(true);
     };
@@ -65,6 +85,56 @@ export default function Header() {
     const handleDrawerClose = () => {
         setDrawerOpen(false);
     };
+
+    const handleInput = (e) => {
+        const { name, value } = e.target
+        setInput((prev) => ({
+            ...prev,
+            [name]: value,
+        }))
+    }
+
+    const handleButtonAdd = () => {
+        setForm(true);
+    }
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setAdd(true);
+        await sendRequestAddGroup();
+        setAdd(false)
+        setForm(false);
+    }
+
+    const sendRequestAddGroup = async () => {
+        try {
+            const response = await fetch('http://localhost:5050/api/v1/group', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": auth.token
+                },
+                body: JSON.stringify({
+                    name: input.name,
+                    description: input.description,
+                })
+            })
+            const res = await response.json();
+            if (res.success) {
+                setStatus('success');
+                setOpen(true)
+                setMessage(res.msg);
+            } else {
+                throw new Error(res.msg);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+
+
     if (load) return <></>
     return (
         <>
@@ -101,7 +171,7 @@ export default function Header() {
                                 </AppBar>
                             </div>
                             <List>
-                                <ListItem button>
+                                <ListItem button onClick={handleButtonAdd}>
                                     <ListItemIcon><LibraryAddIcon /></ListItemIcon>
                                     <ListItemText primary="Add Group" />
                                 </ListItem>
@@ -150,6 +220,24 @@ export default function Header() {
                     </Toolbar>
                 </AppBar>
             </Box>
+            <Dialog open={form} onClose={handleCloseForm}>
+                <DialogTitle>Add a new financial expenditure group</DialogTitle>
+                <DialogContent>
+                    <form>
+                        <TextField name="name" onChange={handleInput} sx={{ m: 1 }} label="Group Name" fullWidth />
+                        <TextField name="description" onChange={handleInput} sx={{ m: 1 }} label="Description" fullWidth />
+                    </form>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseForm}>Hủy</Button>
+                    <Button color="primary" onClick={handleSubmit}>Lưu</Button>
+                </DialogActions>
+            </Dialog>
+            <Snackbar open={open} autoHideDuration={3000} onClose={handleCloseMessage}>
+                <Alert onClose={handleClose} severity={status}>
+                    {message}
+                </Alert>
+            </Snackbar>
         </>
     );
 }
