@@ -12,6 +12,7 @@ const ListFinance = () => {
   const [chart, setChart] = React.useState([]);
   const [chart_all, setChart_all] = React.useState([]);
   const [form, setForm] = React.useState(false);
+  const [formAdd, setFormAdd] = React.useState(false);
   const [load, setLoad] = React.useState(true);
   const [del, setDel] = React.useState(false);
   const [message, setMessage] = React.useState('');
@@ -73,6 +74,7 @@ const ListFinance = () => {
         }
         setData(res.data.finances);
       } else {
+        navigate('/dashboard');
         throw new Error(res.msg);
       }
     } catch (err) {
@@ -85,7 +87,7 @@ const ListFinance = () => {
 
   const get_chart_month = async () => {
     try {
-      const response = await fetch('http://localhost:5050/api/v1/finance/month', {
+      const response = await fetch(`http://localhost:5050/api/v1/finance/month/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -108,7 +110,7 @@ const ListFinance = () => {
 
   const get_chart_all = async () => {
     try {
-      const response = await fetch('http://localhost:5050/api/v1/finance/all', {
+      const response = await fetch(`http://localhost:5050/api/v1/finance/all/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -133,7 +135,15 @@ const ListFinance = () => {
     getData()
     get_chart_month()
     get_chart_all()
-  }, [form, del])
+  }, [form, del, id])
+
+  const handleButtonAddMember = ()=>{
+    setFormAdd(true);
+  }
+
+  const handleCloseFormAddMember = ()=>{
+    setFormAdd(false);
+  }
 
   const handleButtonAdd = () => {
     setForm(true);
@@ -198,6 +208,7 @@ const ListFinance = () => {
           place: input.place,
           type: selectedType.value,
           method: selectedMethod.value,
+          group: id,
         })
       })
       const res = await response.json();
@@ -233,14 +244,7 @@ const ListFinance = () => {
       })
       const res = await response.json();
       if (res.success) {
-        setMessage(res.msg);
-        setStatus('success');
-        setDel(false)
-        setOpen(true);
-        setTimeout(()=>{
-          navigate('/dashboard');
-          window.location.reload();
-        }, 3000);
+        window.location.reload();
       } else {
         throw new Error(res.message);
       }
@@ -279,6 +283,9 @@ const ListFinance = () => {
         <TableContainer component={Paper} sx={{ mt: 2 }}>
           <Button sx={{ m: 2 }} onClick={handleButtonAdd} variant="contained" startIcon={<LibraryAddIcon />} color="primary">
             Thêm
+          </Button>
+          <Button sx={{ m: 2 }} onClick={handleButtonAddMember} variant="contained" startIcon={<LibraryAddIcon />} color="primary">
+            Thêm Thành  Viên
           </Button>
           <Button sx={{ m: 2, backgroundColor:"red"  }} onClick={sendRequestDeleteGroup} variant="contained" startIcon={<AutoDeleteIcon />} color="primary">
             Delete Group
@@ -351,6 +358,18 @@ const ListFinance = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseForm}>Hủy</Button>
+              <Button color="primary" onClick={handleSubmit}>Lưu</Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog open={formAdd} onClose={handleCloseFormAddMember}>
+          <DialogTitle>Thêm thành viên mới</DialogTitle>
+            <DialogContent>
+              <form>
+                <TextField name="email" onChange={handleInput} sx={{ m: 1 }} label="Email thành viên" fullWidth />
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseFormAddMember}>Hủy</Button>
               <Button color="primary" onClick={handleSubmit}>Lưu</Button>
             </DialogActions>
           </Dialog>

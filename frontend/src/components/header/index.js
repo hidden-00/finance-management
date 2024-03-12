@@ -125,6 +125,7 @@ export default function Header() {
                 setStatus('success');
                 setOpen(true)
                 setMessage(res.msg);
+                handleDrawerClose();
             } else {
                 throw new Error(res.msg);
             }
@@ -176,7 +177,10 @@ export default function Header() {
                                     <ListItemText primary="Add Group" />
                                 </ListItem>
                                 {data && data.map(group => (
-                                    <ListItem button onClick={() => { navigate(`/finance/${group._id}`) }}>
+                                    <ListItem button onClick={() => { 
+                                        handleDrawerClose();
+                                        return navigate(`/finance/${group._id}`) 
+                                        }}>
                                         <ListItemIcon><PaymentIcon /></ListItemIcon>
                                         <ListItemText primary={group.name} />
                                     </ListItem>

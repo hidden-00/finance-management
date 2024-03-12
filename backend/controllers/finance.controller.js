@@ -2,6 +2,7 @@ const { OK } = require("http-status");
 const sendResponse = require("../helpers/sendResponse");
 const financeModel = require("../models/finance.model");
 const httpStatus = require("http-status");
+const groupModel = require("../models/group.model");
 
 const FinanceController = {}
 
@@ -11,6 +12,7 @@ FinanceController.createOne = async (req, res, next) => {
         data.user = req.user._id;
         const newFinance = new financeModel(data);
         const newF = await financeModel.create(newFinance);
+        await groupModel.findByIdAndUpdate(data.group, {$push:{"finances": newF._id}});
         return sendResponse(res, httpStatus.OK, true, newF, null, 'create success', null);
     } catch (err) {
         next(err);
@@ -42,8 +44,9 @@ FinanceController.delete = async (req, res, next) => {
 
 FinanceController.chart = async (req, res, next) => {
     try {
+        const {id_group} = req.params;
         const list_finance_month = await financeModel.find({
-            user: req.user._id, is_deleted: false
+            user: req.user._id, is_deleted: false, group: id_group
         })
 
         const tong_thu = list_finance_month.reduce((total, finance) => {
@@ -77,11 +80,12 @@ FinanceController.chart = async (req, res, next) => {
 
 FinanceController.chartMonth = async (req, res, next) => {
     try {
+        const {id_group} = req.params;
         const currentDate = new Date();
         const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
         const list_finance_month = await financeModel.find({
-            user: req.user._id, is_deleted: false, date: {
+            user: req.user._id, is_deleted: false, group: id_group, date: {
                 $gte: startOfMonth,
                 $lt: endOfMonth
             }

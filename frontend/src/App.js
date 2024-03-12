@@ -22,6 +22,7 @@ function App() {
               <Route path='/finance/:id' element={<ListFinance/>}/>
               <Route path='/profile' element={<Profile/>}/>
             </Route>
+            <Route path='*' element={<Navigate to={'/dashboard'}/>}/>
           </Routes>
         </AuthProvider>
       </BrowserRouter>

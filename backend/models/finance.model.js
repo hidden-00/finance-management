@@ -11,6 +11,7 @@ const FinaceSchema = new schema({
     user: {type: mongoose.Types.ObjectId, ref:'users', required: true},
     is_deleted: {type: Boolean, required: true, default: false},
     date: {type: Date, required: true, default: Date.now},
+    group: {type: mongoose.Types.ObjectId, ref: 'groups', required: true},
 })
 
 module.exports = Finance = mongoose.model('finances', FinaceSchema);
