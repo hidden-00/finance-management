@@ -40,6 +40,7 @@ groupController.getFinance = async(req, res, next)=>{
             {path:"finances"},
             {path:"members", select:"email name"}
         ]);
+        if(group) group.finances.reverse();
         return sendResponse(res, httpStatus.OK, true, group, null, 'Get finance of Group success');
     }catch(err){
         next(err);
@@ -53,7 +54,7 @@ groupController.deleteGroup = async(req, res, next)=>{
         if(!group){
             return sendResponse(res, httpStatus.OK, false, null, null, 'Can not found Group!', null);
         }
-        if(req.user._id!==group.leader) return sendResponse(res, httpStatus.UNAUTHORIZED, false, null, null, 'UNAUTHORIZED', null);
+        if(req.user._id!==group.leader.toString()) return sendResponse(res, httpStatus.UNAUTHORIZED, false, null, null, 'UNAUTHORIZED', null);
         group.is_deleted = true;
         await group.save();
         return sendResponse(res, httpStatus.OK, true, group, null, 'Group has been deleted successfully!', null);

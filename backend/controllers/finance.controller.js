@@ -20,6 +20,7 @@ FinanceController.createOne = async (req, res, next) => {
 FinanceController.getList = async (req, res, next) => {
     try {
         const list_finance = await financeModel.find({ user: req.user._id, is_deleted: false });
+        list_finance.reverse();
         return sendResponse(res, httpStatus.OK, true, list_finance, null, 'get list success', null);
     } catch (err) {
         next(err)

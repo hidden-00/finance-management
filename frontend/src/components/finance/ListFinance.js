@@ -5,6 +5,7 @@ import { useAuth } from "../../provider/auth";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { PieChart } from '@mui/x-charts/PieChart';
 import AutoDeleteIcon from '@mui/icons-material/AutoDelete';
+import { useNavigate, useParams } from "react-router-dom";
 
 const ListFinance = () => {
   const [data, setData] = React.useState(null);
@@ -16,6 +17,10 @@ const ListFinance = () => {
   const [message, setMessage] = React.useState('');
   const [status, setStatus] = React.useState('');
   const [open, setOpen] = React.useState(false);
+
+  const navigate = useNavigate();
+
+  const {id} = useParams();
 
   const auth = useAuth();
 
@@ -54,7 +59,7 @@ const ListFinance = () => {
 
   const getData = async () => {
     try {
-      const response = await fetch('http://localhost:5050/api/v1/finance', {
+      const response = await fetch(`http://localhost:5050/api/v1/group/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +68,10 @@ const ListFinance = () => {
       })
       const res = await response.json();
       if (res.success) {
-        setData(res.data);
+        if(res.data.is_deleted){
+          navigate('/dashboard');
+        }
+        setData(res.data.finances);
       } else {
         throw new Error(res.msg);
       }
@@ -213,6 +221,34 @@ const ListFinance = () => {
     setForm(false);
   }
 
+  const sendRequestDeleteGroup = async()=>{
+    try {
+      setDel(true)
+      const response = await fetch(`http://localhost:5050/api/v1/group/delete/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        }
+      })
+      const res = await response.json();
+      if (res.success) {
+        setMessage(res.msg);
+        setStatus('success');
+        setDel(false)
+        setOpen(true);
+        setTimeout(()=>{
+          navigate('/dashboard');
+          window.location.reload();
+        }, 3000);
+      } else {
+        throw new Error(res.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   if (load) {
     return <></>
   }
@@ -244,7 +280,7 @@ const ListFinance = () => {
           <Button sx={{ m: 2 }} onClick={handleButtonAdd} variant="contained" startIcon={<LibraryAddIcon />} color="primary">
             Thêm
           </Button>
-          <Button sx={{ m: 2, backgroundColor:"red"  }} onClick={handleButtonAdd} variant="contained" startIcon={<AutoDeleteIcon />} color="primary">
+          <Button sx={{ m: 2, backgroundColor:"red"  }} onClick={sendRequestDeleteGroup} variant="contained" startIcon={<AutoDeleteIcon />} color="primary">
             Delete Group
           </Button>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
