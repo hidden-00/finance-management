@@ -177,7 +177,7 @@ export default function Header() {
                                     <ListItemText primary="Add Group" />
                                 </ListItem>
                                 {data && data.map(group => (
-                                    <ListItem button onClick={() => { 
+                                    <ListItem key={group._id} button onClick={() => { 
                                         handleDrawerClose();
                                         return navigate(`/finance/${group._id}`) 
                                         }}>

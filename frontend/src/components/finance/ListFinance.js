@@ -1,4 +1,4 @@
-import { Alert, Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
+import { Alert, Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Snackbar, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import * as React from 'react';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { useAuth } from "../../provider/auth";
@@ -294,6 +294,7 @@ const ListFinance = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Tên chi tiêu</TableCell>
+                <TableCell align="right">Người giao dịch</TableCell>
                 <TableCell align="right">Tên món hàng</TableCell>
                 <TableCell align="right">Loại</TableCell>
                 <TableCell align="right">Số tiền</TableCell>
@@ -312,6 +313,7 @@ const ListFinance = () => {
                   <TableCell component="th" scope="row">
                     {row.name}
                   </TableCell>
+                  <TableCell align="right">{row.user.name}</TableCell>
                   <TableCell align="right">{row.mon_hang}</TableCell>
                   <TableCell align="right">{row.type}</TableCell>
                   <TableCell align="right">{VND.format(row.money)}</TableCell>
