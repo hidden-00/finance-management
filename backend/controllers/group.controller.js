@@ -36,7 +36,7 @@ groupController.getNameList = async (req, res, next) => {
 groupController.getFinance = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const group = await groupModel.findOne({ _id: id, leader: req.user._id }).populate([
+        const group = await groupModel.findOne({ _id: id, members: req.user._id }).populate([
             { path: "finances", match: { is_deleted: false }, populate: { path: 'user', select: "name" } },
             { path: "members", select: "email name" },
         ]);
@@ -71,7 +71,20 @@ groupController.addMember = async (req, res, next) => {
         if (!user) {
             return sendResponse(res, httpStatus.OK, false, null, null, 'Not found user from email!', null)
         } else {
-            const group = await groupModel.findById
+            const group = await groupModel.findById(group_id);
+            if(group){
+                if(group.members.includes(user._id)){
+                    return sendResponse(res, httpStatus.OK, false, null, null, 'Thanh Vien Da Ton Tai', null);
+                }else{
+                    group.members.push(user._id);
+                    await group.save();
+                    user.groups.push(group._id);
+                    await user.save();
+                    return sendResponse(res, httpStatus.OK, true, group, null, 'Add members success', null);
+                }
+            }else{
+                return sendResponse(res, httpStatus.OK, false, null, null, 'Not found group', null);
+            }
         }
     } catch (err) {
         next(err);

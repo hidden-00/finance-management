@@ -158,6 +158,7 @@ const ListFinance = () => {
     mon_hang: "",
     money: "",
     place: "",
+    email:"",
   })
 
   const [selectedMethod, setSelectedMethod] = React.useState(null);
@@ -232,9 +233,16 @@ const ListFinance = () => {
     setForm(false);
   }
 
+  const handleSubmitAddMember = async(e)=>{
+    e.preventDefault();
+    setLoad(true)
+    await sendRequestAddMember();
+    setLoad(false);
+    setFormAdd(false);
+  }
+
   const sendRequestDeleteGroup = async()=>{
     try {
-      setDel(true)
       const response = await fetch(`http://localhost:5050/api/v1/group/delete/${id}`, {
         method: "POST",
         headers: {
@@ -246,9 +254,41 @@ const ListFinance = () => {
       if (res.success) {
         window.location.reload();
       } else {
+        setStatus('warning');
+        setMessage(res.msg)
+        setOpen(true);
         throw new Error(res.message);
       }
     } catch (err) {
+      console.error(err);
+    }
+  }
+
+  const sendRequestAddMember = async()=>{
+    try{
+      const response = await fetch(`http://localhost:5050/api/v1/group/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        },
+        body: JSON.stringify({
+          email: input.email,
+          group_id: id
+        })
+      })
+      const res = await response.json();
+      if (res.success) {
+        setStatus('success');
+        setMessage(res.msg);
+        setOpen(true)
+      } else {
+        setStatus('warning');
+        setMessage(res.msg);
+        setOpen(true)
+        throw new Error(res.message);
+      } 
+    }catch(err){
       console.error(err);
     }
   }
@@ -372,7 +412,7 @@ const ListFinance = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseFormAddMember}>Hủy</Button>
-              <Button color="primary" onClick={handleSubmit}>Lưu</Button>
+              <Button color="primary" onClick={handleSubmitAddMember}>Lưu</Button>
             </DialogActions>
           </Dialog>
         </TableContainer>

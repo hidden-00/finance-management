@@ -6,6 +6,7 @@ const router = express.Router()
 router.post('/', auth.authentication, groupController.createOne);
 router.get('/list_name', auth.authentication, groupController.getNameList);
 router.get('/:id', auth.authentication, groupController.getFinance);
+router.post('/add', auth.authentication, groupController.addMember);
 router.post('/delete/:id', auth.authentication, groupController.deleteGroup);
 
 module.exports = router
