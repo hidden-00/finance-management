@@ -30,7 +30,7 @@ const ListFinance = () => {
   const handleDeleteFinance = async (id) => {
     try {
       setDel(true)
-      const response = await fetch(`http://localhost:5050/api/v1/finance/delete/${id}`, {
+      const response = await fetch(`${auth.urlAPI}/api/v1/finance/delete/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +60,7 @@ const ListFinance = () => {
 
   const getData = async () => {
     try {
-      const response = await fetch(`http://localhost:5050/api/v1/group/${id}`, {
+      const response = await fetch(`${auth.urlAPI}/api/v1/group/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +87,7 @@ const ListFinance = () => {
 
   const get_chart_month = async () => {
     try {
-      const response = await fetch(`http://localhost:5050/api/v1/finance/month/${id}`, {
+      const response = await fetch(`${auth.urlAPI}/api/v1/finance/month/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ const ListFinance = () => {
 
   const get_chart_all = async () => {
     try {
-      const response = await fetch(`http://localhost:5050/api/v1/finance/all/${id}`, {
+      const response = await fetch(`${auth.urlAPI}/api/v1/finance/all/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -196,7 +196,7 @@ const ListFinance = () => {
 
   const sendRequestInsert = async () => {
     try {
-      const response = await fetch('http://localhost:5050/api/v1/finance', {
+      const response = await fetch(`${auth.urlAPI}/api/v1/finance`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -243,7 +243,7 @@ const ListFinance = () => {
 
   const sendRequestDeleteGroup = async()=>{
     try {
-      const response = await fetch(`http://localhost:5050/api/v1/group/delete/${id}`, {
+      const response = await fetch(`${auth.urlAPI}/api/v1/group/delete/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -266,7 +266,7 @@ const ListFinance = () => {
 
   const sendRequestAddMember = async()=>{
     try{
-      const response = await fetch(`http://localhost:5050/api/v1/group/add`, {
+      const response = await fetch(`${auth.urlAPI}/api/v1/group/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

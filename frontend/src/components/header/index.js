@@ -39,7 +39,7 @@ export default function Header() {
     const fetchData = async () => {
         try {
             setLoad(true);
-            const response = await fetch('http://localhost:5050/api/v1/group/list_name', {
+            const response = await fetch(`${auth.urlAPI}/api/v1/group/list_name`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -109,7 +109,7 @@ export default function Header() {
 
     const sendRequestAddGroup = async () => {
         try {
-            const response = await fetch('http://localhost:5050/api/v1/group', {
+            const response = await fetch(`${auth.urlAPI}/api/v1/group`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
