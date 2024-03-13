@@ -5,7 +5,7 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('site') || "");
-    const urlAPI = `http://localhost:5050`;
+    const urlAPI = `https://finance-management-zviq.onrender.com`;
     const navigate = useNavigate();
 
     useEffect(() => {
