@@ -68,7 +68,7 @@ const Signin = () => {
     }
 
 
-
+    if(auth.token) return navigate('/');
     return (
         <>
             <Helmet>

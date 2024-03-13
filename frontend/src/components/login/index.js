@@ -60,7 +60,7 @@ const Login = () => {
     }
 
 
-
+    if(auth.token) return navigate('/');
     return (
         <>
             <Helmet>
