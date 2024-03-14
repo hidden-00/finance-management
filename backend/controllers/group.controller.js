@@ -37,8 +37,13 @@ groupController.edit = async(req, res, next)=>{
     try {
         const { name, description, _id } = req.body;
         const id = req.user._id;
-        const new_group = await groupModel.findOneAndUpdate({_id, leader: id}, {$set:{"name": name, "description": description}}, {new: true});
-        return sendResponse(res, httpStatus.OK, true, new_group, null, 'Update Group Success', null);
+        const group = await groupModel.findById(_id);
+        if(!group) return sendResponse(res, httpStatus.OK, false, null, null, 'Not found Group', null);
+        if(group.leader.toString()!==id) return sendResponse(res, httpStatus.OK, false, null, null, 'You not Leader', null);
+        group.name = name;
+        group.description = description;
+        await group.save();
+        return sendResponse(res, httpStatus.OK, true, group, null, 'Update Group Success', null);
     } catch (err) {
         next(err);
     }
