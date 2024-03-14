@@ -139,7 +139,7 @@ const ListFinance = () => {
     getData()
     get_chart_month()
     get_chart_all()
-  }, [del, id])
+  }, [del, form, id])
 
   const handleButtonAddMember = ()=>{
     setFormAdd(true);
@@ -229,6 +229,7 @@ const ListFinance = () => {
         setStatus('success');
         setOpen(true)
         setMessage(res.msg);
+        setForm(false);
       } else {
         throw new Error(res.msg);
       }
@@ -242,7 +243,7 @@ const ListFinance = () => {
     setLoad(true)
     await sendRequestInsert();
     setLoad(false)
-    setForm(false);
+    
   }
 
   const handleSubmitAddMember = async(e)=>{
