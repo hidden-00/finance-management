@@ -61,6 +61,7 @@ const ListFinance = () => {
 
   const getData = async () => {
     try {
+      setLoad(true)
       const response = await fetch(`${auth.urlAPI}/api/v1/group/${id}`, {
         method: "GET",
         headers: {
@@ -74,6 +75,7 @@ const ListFinance = () => {
           navigate('/dashboard');
         }
         setData(res.data);
+        
       } else {
         navigate('/dashboard');
         throw new Error(res.msg);
@@ -432,8 +434,8 @@ const ListFinance = () => {
                 <DialogTitle>Edit finance group</DialogTitle>
                 <DialogContent>
                     <form>
-                        <TextField name="name" value={data.name} onChange={handleInput} sx={{ m: 1 }} label="Group Name" fullWidth />
-                        <TextField name="description" value={data.description} onChange={handleInput} sx={{ m: 1 }} label="Description" fullWidth />
+                        <TextField name="name" value={data?.name} onChange={handleInput} sx={{ m: 1 }} label="Group Name" fullWidth />
+                        <TextField name="description" value={data?.description} onChange={handleInput} sx={{ m: 1 }} label="Description" fullWidth />
                     </form>
                 </DialogContent>
                 <DialogActions>
