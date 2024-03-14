@@ -73,7 +73,7 @@ const ListFinance = () => {
         if(res.data.is_deleted){
           navigate('/dashboard');
         }
-        setData(res.data.finances);
+        setData(res.data);
       } else {
         navigate('/dashboard');
         throw new Error(res.msg);
@@ -357,7 +357,7 @@ const ListFinance = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data && data.map((row) => (
+              {data && data.finances.map((row) => (
                 <TableRow
                   key={row._id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -432,8 +432,8 @@ const ListFinance = () => {
                 <DialogTitle>Edit finance group</DialogTitle>
                 <DialogContent>
                     <form>
-                        <TextField name="name" onChange={handleInput} sx={{ m: 1 }} label="Group Name" fullWidth />
-                        <TextField name="description" onChange={handleInput} sx={{ m: 1 }} label="Description" fullWidth />
+                        <TextField name="name" value={data.name} onChange={handleInput} sx={{ m: 1 }} label="Group Name" fullWidth />
+                        <TextField name="description" value={data.description} onChange={handleInput} sx={{ m: 1 }} label="Description" fullWidth />
                     </form>
                 </DialogContent>
                 <DialogActions>
