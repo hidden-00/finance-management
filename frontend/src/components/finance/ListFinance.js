@@ -139,7 +139,7 @@ const ListFinance = () => {
     getData()
     get_chart_month()
     get_chart_all()
-  }, [form, del, id])
+  }, [del, id])
 
   const handleButtonAddMember = ()=>{
     setFormAdd(true);
