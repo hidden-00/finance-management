@@ -2,7 +2,7 @@ const express = require('express')
 const UserController = require('../controllers/user.controller')
 const auth = require('../middlewares/auth.middleware')
 const validateUser = require('../validation/user');
-const router = express.Router()
+const router = express.Router();
 
 router.post('/', validateUser.sanitizeRegister, validateUser.validateRegisterInput, UserController.createOne)
 router.get('/', auth.authentication, UserController.getAll)
