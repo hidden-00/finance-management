@@ -6,6 +6,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { PieChart } from '@mui/x-charts/PieChart';
 import AutoDeleteIcon from '@mui/icons-material/AutoDelete';
 import { useNavigate, useParams } from "react-router-dom";
+import EditNoteIcon from '@mui/icons-material/EditNote';
 
 const ListFinance = () => {
   const [data, setData] = React.useState(null);
@@ -341,7 +342,7 @@ const ListFinance = () => {
           <Button sx={{ m: 2, backgroundColor:"red"  }} onClick={sendRequestDeleteGroup} variant="contained" startIcon={<AutoDeleteIcon />} color="primary">
             Delete Group
           </Button>
-          <Button sx={{ m: 2, backgroundColor:"red"  }} onClick={handleButtonUpdate} variant="contained" startIcon={<AutoDeleteIcon />} color="primary">
+          <Button sx={{ m: 2  }} onClick={handleButtonUpdate} variant="contained" startIcon={<EditNoteIcon />} color="primary">
             Update Group
           </Button>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
