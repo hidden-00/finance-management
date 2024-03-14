@@ -19,6 +19,8 @@ const ListFinance = () => {
   const [message, setMessage] = React.useState('');
   const [status, setStatus] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const nameRef = React.useRef();
+  const descriptionRef = React.useRef();
 
   const navigate = useNavigate();
 
@@ -238,6 +240,16 @@ const ListFinance = () => {
     await sendRequestAddMember();
   }
 
+  const handleSubmitEditGroup = async (e) => {
+    e.preventDefault();
+    const nameValue = nameRef.current.value;
+    const descriptionValue = descriptionRef.current.value;
+    await sendRequestEditGroup(nameValue, descriptionValue);
+    setTimeout(()=>{
+      window.location.reload();
+    }, 3000);
+  }
+
   const sendRequestDeleteGroup = async () => {
     try {
       const response = await fetch(`${auth.urlAPI}/api/v1/group/delete/${id}`, {
@@ -290,7 +302,38 @@ const ListFinance = () => {
       console.error(err);
     }
   }
-  
+
+  const sendRequestEditGroup = async (name, description) => {
+    try {
+      const response = await fetch(`${auth.urlAPI}/api/v1/group/update`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        },
+        body: JSON.stringify({
+          name: name,
+          description: description,
+          _id: id
+        })
+      })
+      const res = await response.json();
+      if (res.success) {
+        setStatus('success');
+        setMessage(res.msg);
+        setOpen(true)
+        setFormUpdate(false);
+      } else {
+        setStatus('warning');
+        setMessage(res.msg);
+        setOpen(true)
+        throw new Error(res.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <>
       <div style={{ display: "flex" }}>
@@ -417,13 +460,13 @@ const ListFinance = () => {
           <DialogTitle>Edit finance group</DialogTitle>
           <DialogContent>
             <form>
-              <TextField name="name" value={data?.name} onChange={handleInput} sx={{ m: 1 }} label="Group Name" fullWidth />
-              <TextField name="description" value={data?.description} onChange={handleInput} sx={{ m: 1 }} label="Description" fullWidth />
+              <TextField inputRef={nameRef} defaultValue={data?.name} sx={{ m: 1 }} label="Group Name" fullWidth />
+              <TextField inputRef={descriptionRef} defaultValue={data?.description} sx={{ m: 1 }} label="Description" fullWidth />
             </form>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseFormUpdate}>Hủy</Button>
-            <Button color="primary" onClick={handleSubmit}>Lưu</Button>
+            <Button color="primary" onClick={handleSubmitEditGroup}>Lưu</Button>
           </DialogActions>
         </Dialog>
 
