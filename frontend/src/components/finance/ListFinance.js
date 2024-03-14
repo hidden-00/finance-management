@@ -245,9 +245,6 @@ const ListFinance = () => {
     const nameValue = nameRef.current.value;
     const descriptionValue = descriptionRef.current.value;
     await sendRequestEditGroup(nameValue, descriptionValue);
-    setTimeout(()=>{
-      window.location.reload();
-    }, 3000);
   }
 
   const sendRequestDeleteGroup = async () => {
@@ -323,6 +320,9 @@ const ListFinance = () => {
         setMessage(res.msg);
         setOpen(true)
         setFormUpdate(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       } else {
         setStatus('warning');
         setMessage(res.msg);
