@@ -46,7 +46,7 @@ FinanceController.chart = async (req, res, next) => {
     try {
         const {id_group} = req.params;
         const list_finance_month = await financeModel.find({
-            user: req.user._id, is_deleted: false, group: id_group
+            is_deleted: false, group: id_group
         })
 
         const tong_thu = list_finance_month.reduce((total, finance) => {
@@ -85,7 +85,7 @@ FinanceController.chartMonth = async (req, res, next) => {
         const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
         const list_finance_month = await financeModel.find({
-            user: req.user._id, is_deleted: false, group: id_group, date: {
+            is_deleted: false, group: id_group, date: {
                 $gte: startOfMonth,
                 $lt: endOfMonth
             }
