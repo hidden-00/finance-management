@@ -13,6 +13,7 @@ const ListFinance = () => {
   const [chart_all, setChart_all] = React.useState([]);
   const [form, setForm] = React.useState(false);
   const [formAdd, setFormAdd] = React.useState(false);
+  const [formUpdate, setFormUpdate] = React.useState(false);
   const [load, setLoad] = React.useState(true);
   const [del, setDel] = React.useState(false);
   const [message, setMessage] = React.useState('');
@@ -151,6 +152,14 @@ const ListFinance = () => {
 
   const handleCloseForm = () => {
     setForm(false);
+  };
+
+  const handleButtonUpdate = () => {
+    setFormUpdate(true);
+  }
+
+  const handleCloseFormUpdate = () => {
+    setFormUpdate(false);
   };
 
   const [input, setInput] = React.useState({
@@ -330,6 +339,9 @@ const ListFinance = () => {
           <Button sx={{ m: 2, backgroundColor:"red"  }} onClick={sendRequestDeleteGroup} variant="contained" startIcon={<AutoDeleteIcon />} color="primary">
             Delete Group
           </Button>
+          <Button sx={{ m: 2, backgroundColor:"red"  }} onClick={handleButtonUpdate} variant="contained" startIcon={<AutoDeleteIcon />} color="primary">
+            Update Group
+          </Button>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
@@ -415,6 +427,21 @@ const ListFinance = () => {
               <Button color="primary" onClick={handleSubmitAddMember}>Lưu</Button>
             </DialogActions>
           </Dialog>
+
+          <Dialog open={formUpdate} onClose={handleCloseFormUpdate}>
+                <DialogTitle>Edit finance group</DialogTitle>
+                <DialogContent>
+                    <form>
+                        <TextField name="name" onChange={handleInput} sx={{ m: 1 }} label="Group Name" fullWidth />
+                        <TextField name="description" onChange={handleInput} sx={{ m: 1 }} label="Description" fullWidth />
+                    </form>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseFormUpdate}>Hủy</Button>
+                    <Button color="primary" onClick={handleSubmit}>Lưu</Button>
+                </DialogActions>
+            </Dialog>
+
         </TableContainer>
         <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
           <Alert onClose={handleClose} severity={status}>

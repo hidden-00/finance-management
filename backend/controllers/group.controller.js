@@ -33,6 +33,17 @@ groupController.getNameList = async (req, res, next) => {
     }
 }
 
+groupController.edit = async(req, res, next)=>{
+    try {
+        const { name, description, _id } = req.body;
+        const id = req.user._id;
+        const new_group = await groupModel.findOneAndUpdate({_id, leader: id}, {$set:{"name": name, "description": description}}, {new: true});
+        return sendResponse(res, httpStatus.OK, true, new_group, null, 'Update Group Success', null);
+    } catch (err) {
+        next(err);
+    }
+}
+
 groupController.getFinance = async (req, res, next) => {
     try {
         const id = req.params.id;
