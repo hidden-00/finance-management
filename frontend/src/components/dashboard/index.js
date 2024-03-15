@@ -11,19 +11,23 @@ const Dashboard = () => {
         <h2>Finance Management, Mike</h2>
         <text>The website provides tools for users to manage personal or group finances.</text>
         <h2>
-        Stack Technology (MERN)
+          Stack Technology (MERN)
         </h2>
-        <li>Backend: NodeJS - ExpressJS</li>
-        <li>Frontend: ReactJS</li>
-        <li>Database: MongoDB</li>
+        <li>
+          <ul>Backend: NodeJS - ExpressJS</ul>
+          <ul>Frontend: ReactJS</ul>
+          <ul>Database: MongoDB</ul>
+        </li>
         <h2>Features</h2>
-        <li>Manage personal finance</li>
-        <li>Group financial management</li>
-        <br/>
+        <li>
+          <ul>Manage personal finance</ul>
+          <ul>Group financial management</ul>
+        </li>
+        <br />
         <text>The source code is designed to serve both individuals and groups. You can create your own group and invite other members to your financial group, sharing personal financial income and expenses together in groups.</text>
         <br></br>
         <Button
-          onClick={()=> auth.logOut()}
+          onClick={() => auth.logOut()}
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >Logout</Button>

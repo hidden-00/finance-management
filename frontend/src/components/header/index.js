@@ -21,7 +21,6 @@ export default function Header() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [data, setData] = React.useState([]);
-    const [load, setLoad] = React.useState(false);
     const [form, setForm] = React.useState(false);
     const [input, setInput] = React.useState({
         name: "",
@@ -38,7 +37,6 @@ export default function Header() {
 
     const fetchData = async () => {
         try {
-            setLoad(true);
             const response = await fetch(`${auth.urlAPI}/api/v1/group/list_name`, {
                 method: "GET",
                 headers: {
@@ -54,8 +52,6 @@ export default function Header() {
             }
         } catch (err) {
             console.error(err);
-        } finally {
-            setLoad(false);
         }
     }
 
@@ -134,9 +130,6 @@ export default function Header() {
         }
     }
 
-
-
-    if (load) return <></>
     return (
         <>
             <Helmet>
@@ -177,10 +170,10 @@ export default function Header() {
                                     <ListItemText primary="Add Group" />
                                 </ListItem>
                                 {data && data.map(group => (
-                                    <ListItem key={group._id} button onClick={() => { 
+                                    <ListItem key={group._id} button onClick={() => {
                                         handleDrawerClose();
-                                        return navigate(`/finance/${group._id}`) 
-                                        }}>
+                                        return navigate(`/finance/${group._id}`)
+                                    }}>
                                         <ListItemIcon><PaymentIcon /></ListItemIcon>
                                         <ListItemText primary={group.name} />
                                     </ListItem>
