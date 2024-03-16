@@ -13,16 +13,12 @@ const Dashboard = () => {
         <h2>
           Stack Technology (MERN)
         </h2>
-        <li>
-          <ul>Backend: NodeJS - ExpressJS</ul>
-          <ul>Frontend: ReactJS</ul>
-          <ul>Database: MongoDB</ul>
-        </li>
+        <li>Backend: NodeJS - ExpressJS</li>
+        <li>Frontend: ReactJS</li>
+        <li>Database: MongoDB</li>
         <h2>Features</h2>
-        <li>
-          <ul>Manage personal finance</ul>
-          <ul>Group financial management</ul>
-        </li>
+        <li>Manage personal finance</li>
+        <li>Group financial management</li>
         <br />
         <text>The source code is designed to serve both individuals and groups. You can create your own group and invite other members to your financial group, sharing personal financial income and expenses together in groups.</text>
         <br></br>
