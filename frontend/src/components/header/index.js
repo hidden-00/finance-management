@@ -212,6 +212,7 @@ export default function Header() {
                             >
                                 <MenuItem onClick={() => { navigate('/profile') }}>Profile</MenuItem>
                                 <MenuItem onClick={() => { auth.logOut() }}>Logout</MenuItem>
+                                <MenuItem onClick={() => { auth.logOut() }}>Log Login</MenuItem>
                             </Menu>
                         </div>
                     </Toolbar>
