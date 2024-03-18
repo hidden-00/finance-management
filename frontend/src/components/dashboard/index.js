@@ -1,9 +1,13 @@
 import React, { } from "react";
 import { useAuth } from "../../provider/auth";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 
 const Dashboard = () => {
   const auth = useAuth();
+
+  if (!auth.user) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <CircularProgress />
+  </div>
   return (
     <div className="container">
       <div>
