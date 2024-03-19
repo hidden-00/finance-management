@@ -18,7 +18,7 @@ loginlogController.insertOne = async(req, token, next)=>{
 
 loginlogController.getAll = async(req, res, next)=>{
     try{
-        const user_id = req.user_id;
+        const user_id = req.user._id;
         const list_log = await loginLog.find({user_id});
         return sendResponse(res, httpStatus.OK, true, list_log, null, 'Get Logs Success', null);
     }catch(err){
