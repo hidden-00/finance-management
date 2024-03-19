@@ -1,6 +1,8 @@
 const loginlogController = {}
 const jwt = require('jsonwebtoken')
 const loginLog = require('../models/loginlog.model')
+const sendResponse = require("../helpers/sendResponse");
+const httpStatus = require('http-status');
 
 loginlogController.insertOne = async(req, token, next)=>{
     try{
@@ -11,6 +13,16 @@ loginlogController.insertOne = async(req, token, next)=>{
 		return newLog.save();
     }catch(err){
         next(err)
+    }
+}
+
+loginlogController.getAll = async(req, res, next)=>{
+    try{
+        const user_id = req.user_id;
+        const list_log = await loginLog.find({user_id});
+        return sendResponse(res, httpStatus.OK, true, list_log, null, 'Get Logs Success', null);
+    }catch(err){
+        next(err);
     }
 }
 
