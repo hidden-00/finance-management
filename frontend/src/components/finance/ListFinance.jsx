@@ -364,7 +364,7 @@ const ListFinance = () => {
         />
       </div>
 
-      <TableContainer component={Paper} sx={{ mt: 2 }}>
+      <TableContainer component={Paper} sx={{ mt: 2, textAlign: 'center' }}>
         <Button sx={{ m: 2 }} onClick={handleButtonAdd} variant="contained" startIcon={<LibraryAddIcon />} color="primary">
           Thêm
         </Button>
@@ -376,6 +376,9 @@ const ListFinance = () => {
         </Button>
         <Button sx={{ m: 2 }} onClick={handleButtonUpdate} variant="contained" startIcon={<EditNoteIcon />} color="primary">
           Update Group
+        </Button>
+        <Button sx={{ m: 2 }} onClick={handleButtonUpdate} variant="contained" startIcon={<EditNoteIcon />} color="primary">
+          List Members
         </Button>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>

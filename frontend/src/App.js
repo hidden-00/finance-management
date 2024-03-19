@@ -11,7 +11,7 @@ import LogLogin from './components/logLogin';
 
 function App() {
   return (
-    <div className="App">
+    <div>
       <BrowserRouter>
         <AuthProvider>
           <Routes>
