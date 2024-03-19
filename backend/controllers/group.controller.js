@@ -57,6 +57,7 @@ groupController.getFinance = async (req, res, next) => {
             { path: "members", select: "email name" },
         ]);
         if (group) group.finances.reverse();
+        else return sendResponse(res, httpStatus.OK, false, null, null, 'Not Found', null);
         return sendResponse(res, httpStatus.OK, true, group, null, 'Get finance of Group success');
     } catch (err) {
         next(err);
