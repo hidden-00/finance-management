@@ -52,7 +52,7 @@ groupController.edit = async(req, res, next)=>{
 groupController.getFinance = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const group = await groupModel.findOne({ _id: id, members: req.user._id }).populate([
+        const group = await groupModel.findOne({ _id: id, members: req.user._id, is_deleted: false }).populate([
             { path: "finances", match: { is_deleted: false }, populate: { path: 'user', select: "name" } },
             { path: "members", select: "email name" },
         ]);

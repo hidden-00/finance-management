@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useContext, createContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 const AuthContext = createContext();
@@ -8,33 +9,33 @@ const AuthProvider = ({ children }) => {
     const urlAPI = `https://finance-management-zviq.onrender.com`;
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`${urlAPI}/api/v1/user/info`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": token
-                    }
-                });
-
-                const res = await response.json();
-                if (res.success) {
-                    setUser(res.data);
-                } else {
-                    setToken('');
-                    localStorage.removeItem('site')
-                    navigate('/login');
-                    throw new Error(res.message);
+    const fetchData = useCallback(async () => {
+        try {
+            const response = await fetch(`${urlAPI}/api/v1/user/info`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": token
                 }
-            } catch (error) {
-                console.error(error);
-            }
-        };
+            });
 
+            const res = await response.json();
+            if (res.success) {
+                setUser(res.data);
+            } else {
+                setToken('');
+                localStorage.removeItem('site')
+                navigate('/login');
+                throw new Error(res.message);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    },[urlAPI, token, navigate])
+
+    useEffect(() => {
         fetchData();
-    }, [])
+    }, [fetchData])
 
     const loginAction = async (data) => {
         try {

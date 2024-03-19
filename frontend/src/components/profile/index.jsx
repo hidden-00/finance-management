@@ -43,7 +43,7 @@ export default function Profile() {
         <CircularProgress />
     </div>
     return (
-        <>
+        <div style={{textAlign:"center"}}>
             <form style={{ margin: 30 }}>
                 <TextField inputRef={emailRef} defaultValue={data?.email} sx={{ m: 1, width: '50%' }} label="Email" />
                 <TextField inputRef={nameRef} defaultValue={data?.name} sx={{ m: 1, width: '50%' }} label="Name" />
@@ -55,6 +55,6 @@ export default function Profile() {
             >
                 Save
             </Button>
-        </>
+        </div>
     )
 }

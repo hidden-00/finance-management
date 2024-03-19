@@ -2,7 +2,6 @@ import { useCallback, useState } from "react"
 import { useAuth } from "../../provider/auth";
 import { Alert, Button, CircularProgress, Snackbar, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { useEffect } from "react";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 export default function LogLogin() {
     const [load, setLoad] = useState(false);
