@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,29 +15,26 @@ import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, 
 import { Helmet } from 'react-helmet';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
 
 export default function Header() {
     const navigate = useNavigate();
     const auth = useAuth();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [drawerOpen, setDrawerOpen] = React.useState(false);
-    const [data, setData] = React.useState([]);
-    const [form, setForm] = React.useState(false);
-    const [input, setInput] = React.useState({
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [data, setData] = useState([]);
+    const [form, setForm] = useState(false);
+    const [input, setInput] = useState({
         name: "",
         description: ""
     })
-    const [message, setMessage] = React.useState('');
-    const [status, setStatus] = React.useState('');
-    const [open, setOpen] = React.useState(false);
-    const [add, setAdd] = React.useState(false);
-    const [load, setLoad] = React.useState(false);
+    const [message, setMessage] = useState('');
+    const [status, setStatus] = useState('');
+    const [open, setOpen] = useState(false);
+    const [add, setAdd] = useState(false);
+    const [load, setLoad] = useState(false);
 
-    React.useEffect(() => {
-        fetchData();
-    }, [add])
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoad(true);
             const response = await fetch(`${auth.urlAPI}/api/v1/group/list_name`, {
@@ -57,7 +55,11 @@ export default function Header() {
         } finally {
             setLoad(false);
         }
-    }
+    }, [auth.token, auth.urlAPI])
+
+    useEffect(() => {
+        fetchData();
+    }, [add, fetchData])
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -220,7 +222,7 @@ export default function Header() {
                             >
                                 <MenuItem onClick={() => { navigate('/profile') }}>Profile</MenuItem>
                                 <MenuItem onClick={() => { auth.logOut() }}>Logout</MenuItem>
-                                <MenuItem onClick={() => { auth.logOut() }}>Log Login</MenuItem>
+                                <MenuItem onClick={() => { navigate('/logs') }}>Log Login</MenuItem>
                             </Menu>
                         </div>
                     </Toolbar>

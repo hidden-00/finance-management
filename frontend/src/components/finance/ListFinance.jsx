@@ -7,6 +7,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import AutoDeleteIcon from '@mui/icons-material/AutoDelete';
 import { useNavigate, useParams } from "react-router-dom";
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import { useCallback } from "react";
 
 const ListFinance = () => {
   const [data, setData] = React.useState(null);
@@ -61,7 +62,7 @@ const ListFinance = () => {
     setOpen(false);
   };
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     try {
       setLoad(true);
       const response = await fetch(`${auth.urlAPI}/api/v1/group/${id}`, {
@@ -87,9 +88,9 @@ const ListFinance = () => {
     } finally{
       setLoad(false);
     }
-  }
+  },[id, auth.token, auth.urlAPI, navigate]);
 
-  const get_chart_month = async () => {
+  const get_chart_month = useCallback(async () => {
     try {
       const response = await fetch(`${auth.urlAPI}/api/v1/finance/month/${id}`, {
         method: "GET",
@@ -107,9 +108,9 @@ const ListFinance = () => {
     } catch (err) {
       console.error(err);
     }
-  }
+  },[auth.urlAPI, auth.token, id])
 
-  const get_chart_all = async () => {
+  const get_chart_all = useCallback(async () => {
     try {
       const response = await fetch(`${auth.urlAPI}/api/v1/finance/all/${id}`, {
         method: "GET",
@@ -127,13 +128,13 @@ const ListFinance = () => {
     } catch (err) {
       console.error(err);
     }
-  }
+  },[auth.token, auth.urlAPI, id])
 
   React.useEffect(() => {
     getData()
     get_chart_month()
     get_chart_all()
-  }, [change, id])
+  }, [change, id, get_chart_all, get_chart_month, getData])
 
   const handleButtonAddMember = () => {
     setFormAdd(true);

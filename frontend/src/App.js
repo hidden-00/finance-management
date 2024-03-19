@@ -7,6 +7,7 @@ import Dashboard from './components/dashboard';
 import Signin from './components/signin';
 import ListFinance from './components/finance/ListFinance';
 import Profile from './components/profile';
+import LogLogin from './components/logLogin';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path='/finance/:id' element={<ListFinance/>}/>
               <Route path='/profile' element={<Profile/>}/>
+              <Route path='/logs' element={<LogLogin/>}/>
             </Route>
             <Route path='*' element={<Navigate to={'/dashboard'}/>}/>
           </Routes>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../../provider/auth";
 import { Button, CircularProgress, TextField } from "@mui/material";
 
@@ -9,7 +9,7 @@ export default function Profile() {
     const nameRef = useRef();
     const [load, setLoad] = useState(false);
 
-    const sendRequestGetData = async () => {
+    const sendRequestGetData = useCallback(async () => {
         try {
             setLoad(true);
             const response = await fetch(`${auth.urlAPI}/api/v1/user/info`, {
@@ -30,11 +30,14 @@ export default function Profile() {
         } finally {
             setLoad(false)
         }
-    }
+    },[auth.token, auth.urlAPI])
 
     useEffect(() => {
-        sendRequestGetData();
-    }, [])
+        const fetchData = async()=>{
+            await sendRequestGetData();
+        }
+        fetchData();
+    }, [sendRequestGetData])
 
     if (load) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
