@@ -1,4 +1,4 @@
-import { Alert, Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
+import { Alert, Autocomplete, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import * as React from 'react';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { useAuth } from "../../provider/auth";
@@ -19,6 +19,7 @@ const ListFinance = () => {
   const [message, setMessage] = React.useState('');
   const [status, setStatus] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [load, setLoad] = React.useState(false);
   const nameRef = React.useRef();
   const descriptionRef = React.useRef();
 
@@ -62,6 +63,7 @@ const ListFinance = () => {
 
   const getData = async () => {
     try {
+      setLoad(true);
       const response = await fetch(`${auth.urlAPI}/api/v1/group/${id}`, {
         method: "GET",
         headers: {
@@ -82,6 +84,8 @@ const ListFinance = () => {
       }
     } catch (err) {
       console.error(err);
+    } finally{
+      setLoad(false);
     }
   }
 
@@ -333,7 +337,9 @@ const ListFinance = () => {
       console.error(err);
     }
   }
-
+  if(load) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+  <CircularProgress />
+</div>
   return (
     <>
       <div style={{ display: "flex" }}>

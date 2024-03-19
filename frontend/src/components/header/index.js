@@ -10,7 +10,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useAuth } from '../../provider/auth';
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, List, ListItem, ListItemIcon, ListItemText, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, List, ListItem, ListItemIcon, ListItemText, Snackbar, TextField } from '@mui/material';
 import { Helmet } from 'react-helmet';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { useNavigate } from 'react-router-dom';
@@ -30,6 +30,7 @@ export default function Header() {
     const [status, setStatus] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const [add, setAdd] = React.useState(false);
+    const [load, setLoad] = React.useState(false);
 
     React.useEffect(() => {
         fetchData();
@@ -37,6 +38,7 @@ export default function Header() {
 
     const fetchData = async () => {
         try {
+            setLoad(true);
             const response = await fetch(`${auth.urlAPI}/api/v1/group/list_name`, {
                 method: "GET",
                 headers: {
@@ -52,6 +54,8 @@ export default function Header() {
             }
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoad(false);
         }
     }
 
@@ -129,6 +133,10 @@ export default function Header() {
             console.error(err);
         }
     }
+
+    if (load) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+    </div>
 
     return (
         <>
