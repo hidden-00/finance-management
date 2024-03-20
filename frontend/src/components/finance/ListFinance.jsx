@@ -8,9 +8,10 @@ import AutoDeleteIcon from '@mui/icons-material/AutoDelete';
 import { useNavigate, useParams } from "react-router-dom";
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useCallback } from "react";
+import { useState } from "react";
 
 const ListFinance = () => {
-  const [data, setData] = React.useState(null);
+  const [data, setData] = useState(null);
   const [chart, setChart] = React.useState([]);
   const [chart_all, setChart_all] = React.useState([]);
   const [form, setForm] = React.useState(false);
@@ -85,10 +86,10 @@ const ListFinance = () => {
       }
     } catch (err) {
       console.error(err);
-    } finally{
+    } finally {
       setLoad(false);
     }
-  },[id, auth.token, auth.urlAPI, navigate]);
+  }, [id, auth.token, auth.urlAPI, navigate]);
 
   const get_chart_month = useCallback(async () => {
     try {
@@ -108,7 +109,7 @@ const ListFinance = () => {
     } catch (err) {
       console.error(err);
     }
-  },[auth.urlAPI, auth.token, id])
+  }, [auth.urlAPI, auth.token, id])
 
   const get_chart_all = useCallback(async () => {
     try {
@@ -128,7 +129,7 @@ const ListFinance = () => {
     } catch (err) {
       console.error(err);
     }
-  },[auth.token, auth.urlAPI, id])
+  }, [auth.token, auth.urlAPI, id])
 
   React.useEffect(() => {
     getData()
@@ -275,6 +276,16 @@ const ListFinance = () => {
     }
   }
 
+  const handleDeleteMember = async(id)=>{
+    try{
+
+    }catch(err){
+
+    }finally{
+      
+    }
+  }
+
   const sendRequestAddMember = async () => {
     try {
       const response = await fetch(`${auth.urlAPI}/api/v1/group/add`, {
@@ -338,9 +349,9 @@ const ListFinance = () => {
       console.error(err);
     }
   }
-  if(load) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-  <CircularProgress />
-</div>
+  if (load) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <CircularProgress />
+  </div>
   return (
     <>
       <div style={{ display: "flex" }}>
@@ -478,6 +489,37 @@ const ListFinance = () => {
             <Button onClick={handleCloseFormUpdate}>Hủy</Button>
             <Button color="primary" onClick={handleSubmitEditGroup}>Lưu</Button>
           </DialogActions>
+        </Dialog>
+
+        <Dialog open={true} onClose={handleCloseFormUpdate}>
+          <DialogTitle>List Members</DialogTitle>
+          <Table size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell align="left">Email</TableCell>
+                <TableCell align="right"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data && data.members.map((row) => (
+                <TableRow
+                  key={row._id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {row.name}
+                  </TableCell>
+                  <TableCell align="left">{row.email}</TableCell>
+                  <TableCell align="right">
+                    <DeleteForeverIcon onClick={() => {
+                      handleDeleteMember(row._id)
+                    }} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Dialog>
 
       </TableContainer>
