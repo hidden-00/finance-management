@@ -9,21 +9,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useCallback } from "react";
 import { useState } from "react";
+import { useRef } from "react";
 
 const ListFinance = () => {
   const [data, setData] = useState(null);
-  const [chart, setChart] = React.useState([]);
-  const [chart_all, setChart_all] = React.useState([]);
-  const [form, setForm] = React.useState(false);
-  const [formAdd, setFormAdd] = React.useState(false);
-  const [formUpdate, setFormUpdate] = React.useState(false);
-  const [change, setChange] = React.useState(false);
-  const [message, setMessage] = React.useState('');
-  const [status, setStatus] = React.useState('');
-  const [open, setOpen] = React.useState(false);
-  const [load, setLoad] = React.useState(false);
-  const nameRef = React.useRef();
-  const descriptionRef = React.useRef();
+  const [chart, setChart] = useState([]);
+  const [chart_all, setChart_all] = useState([]);
+  const [form, setForm] = useState(false);
+  const [formAdd, setFormAdd] = useState(false);
+  const [formMember, setFormMember] = useState(false);
+  const [formUpdate, setFormUpdate] = useState(false);
+  const [change, setChange] = useState(false);
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('');
+  const [open, setOpen] = useState(false);
+  const [load, setLoad] = useState(false);
+  const nameRef = useRef();
+  const descriptionRef = useRef();
 
   const navigate = useNavigate();
 
@@ -160,6 +162,14 @@ const ListFinance = () => {
   const handleCloseFormUpdate = () => {
     setFormUpdate(false);
   };
+
+  const handleButtonMember = () => {
+    setFormMember(true);
+  }
+
+  const handleCloseFormMember = ()=>{
+    setFormMember(false);
+  }
 
   const [input, setInput] = React.useState({
     name: "",
@@ -388,7 +398,7 @@ const ListFinance = () => {
         <Button sx={{ m: 2 }} onClick={handleButtonUpdate} variant="contained" startIcon={<EditNoteIcon />} color="primary">
           Update Group
         </Button>
-        <Button sx={{ m: 2 }} onClick={handleButtonUpdate} variant="contained" startIcon={<EditNoteIcon />} color="primary">
+        <Button sx={{ m: 2 }} onClick={handleButtonMember} variant="contained" startIcon={<EditNoteIcon />} color="primary">
           List Members
         </Button>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -491,7 +501,7 @@ const ListFinance = () => {
           </DialogActions>
         </Dialog>
 
-        <Dialog open={true} onClose={handleCloseFormUpdate}>
+        <Dialog open={formMember} onClose={handleCloseFormMember}>
           <DialogTitle>List Members</DialogTitle>
           <Table size="small" aria-label="a dense table">
             <TableHead>

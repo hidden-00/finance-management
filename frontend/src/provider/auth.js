@@ -25,7 +25,6 @@ const AuthProvider = ({ children }) => {
             } else {
                 setToken('');
                 localStorage.removeItem('site')
-                navigate('/login');
                 throw new Error(res.message);
             }
         } catch (error) {
