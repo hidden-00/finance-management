@@ -20,6 +20,7 @@ loginlogController.getAll = async(req, res, next)=>{
     try{
         const user_id = req.user._id;
         const list_log = await loginLog.find({user_id});
+        if(list_log) list_log.reverse();
         return sendResponse(res, httpStatus.OK, true, list_log, null, 'Get Logs Success', null);
     }catch(err){
         next(err);
