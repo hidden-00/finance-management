@@ -10,6 +10,7 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useCallback } from "react";
 import { useState } from "react";
 import { useRef } from "react";
+import moment from 'moment';
 
 const ListFinance = () => {
   const [data, setData] = useState(null);
@@ -34,6 +35,10 @@ const ListFinance = () => {
   const auth = useAuth();
 
   let VND = new Intl.NumberFormat('en-US');
+
+  const formatTime = (str)=>{
+    return moment(str).format('DD/MM/YYYY HH:mm:ss');
+  }
 
   const handleDeleteFinance = async (id) => {
     try {
@@ -429,7 +434,7 @@ const ListFinance = () => {
                 <TableCell align="right">{row.type}</TableCell>
                 <TableCell align="right">{VND.format(row.money)}</TableCell>
                 <TableCell align="right">{row.method}</TableCell>
-                <TableCell align="right">{row.date}</TableCell>
+                <TableCell align="right">{formatTime(row.date)}</TableCell>
                 <TableCell align="right">{row.place}</TableCell>
                 <TableCell align="right">
                   <DeleteForeverIcon onClick={() => {

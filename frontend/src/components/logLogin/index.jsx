@@ -2,6 +2,7 @@ import { useCallback, useState } from "react"
 import { useAuth } from "../../provider/auth";
 import { Alert, Button, CircularProgress, Snackbar, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { useEffect } from "react";
+import moment from 'moment';
 
 export default function LogLogin() {
     const [load, setLoad] = useState(false);
@@ -10,6 +11,10 @@ export default function LogLogin() {
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('');
     const auth = useAuth();
+
+    const formatTime = (str) => {
+        return moment(str).format('DD/MM/YYYY HH:mm:ss');
+    }
 
     const sendRequestGetData = useCallback(async () => {
         try {
@@ -44,7 +49,7 @@ export default function LogLogin() {
         sendRequestGetData();
     }, [sendRequestGetData]);
 
-    const handleClose = ()=>{
+    const handleClose = () => {
         setOpen(false);
     }
 
@@ -52,7 +57,7 @@ export default function LogLogin() {
         <CircularProgress />
     </div>
     return <>
-        <Table sx={{ minWidth: 650, mt: 1, ml:1, mr:1 }} size="small" aria-label="a dense table">
+        <Table sx={{ minWidth: 650, mt: 1, ml: 1, mr: 1 }} size="small" aria-label="a dense table">
             <TableHead>
                 <TableRow>
                     <TableCell>login_date</TableCell>
@@ -72,27 +77,27 @@ export default function LogLogin() {
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     >
                         <TableCell component="th" scope="row">
-                            {row.login_date}
+                            {formatTime(row.login_date)}
                         </TableCell>
-                        <TableCell align="right">{row.expires_in}</TableCell>
-                        <TableCell align="right">{row.logout_date}</TableCell>
+                        <TableCell align="right">{formatTime(row.expires_in)}</TableCell>
+                        <TableCell align="right">{row.logout_date?formatTime(row.logout_date):''}</TableCell>
                         <TableCell align="right">{row.ip_address.split(":").pop()}</TableCell>
                         <TableCell align="right">{row.device_info}</TableCell>
                         <TableCell align="right">{row.browser_info}</TableCell>
                         <TableCell align="right">{
-                            row.is_active?<text style={{color: 'green'}}>Active</text>:<text style={{color:'red'}}>Inactive</text>
+                            row.is_active ? <text style={{ color: 'green' }}>Active</text> : <text style={{ color: 'red' }}>Inactive</text>
                         }</TableCell>
                         <TableCell align="center">
-                            {row.is_active?<Button variant="contained">Logout</Button>:<></>}
+                            {row.is_active ? <Button variant="contained">Logout</Button> : <></>}
                         </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
         </Table>
         <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={status}>
-          {message}
-        </Alert>
-      </Snackbar>
+            <Alert onClose={handleClose} severity={status}>
+                {message}
+            </Alert>
+        </Snackbar>
     </>
 }
