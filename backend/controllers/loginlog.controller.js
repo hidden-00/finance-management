@@ -16,6 +16,17 @@ loginlogController.insertOne = async(req, token, next)=>{
     }
 }
 
+loginlogController.logout = async(req, res, next)=>{
+    try{
+        const {id} = req.body;
+        const user_id = req.user._id;
+        const save = await loginLog.findOneAndUpdate({id, user_id, is_active: true}, {$set:{is_active: false}}, {new: true});
+        return sendResponse(res, httpStatus.OK, save?true: false, save, null, 'Logout success', null);
+    }catch(err){
+        next(err);
+    }
+}
+
 loginlogController.getAll = async(req, res, next)=>{
     try{
         const user_id = req.user._id;
