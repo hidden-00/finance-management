@@ -58,7 +58,7 @@ validations.validateEmail = (req, res, next)=>{
     ];
     const errors = validateHelper.validation(data, validateArray);
     if (!isEmpty(errors)) {
-        return sendResponse(res, httpStatus.BAD_REQUEST, false, null, errors, 'invalid input', null);
+        return sendResponse(res, httpStatus.BAD_REQUEST, false, null, errors, errors[Object.keys(errors)[0]], null);
     } else {
         next();
     }
@@ -77,7 +77,7 @@ validations.validatePost = (req, res, next)=>{
                 {
                     condition: 'IsLength',
                     msg: 'This field should be between 2 to 100',
-                    option: { min: 2, max: 100 },
+                    option: { min: 2, max:  100},
                 },
             ],
         },
@@ -98,7 +98,7 @@ validations.validatePost = (req, res, next)=>{
     ];
     const errors = validateHelper.validation(data, validateArray);
     if (!isEmpty(errors)) {
-        return sendResponse(res, httpStatus.BAD_REQUEST, false, null, errors, 'invalid input', null);
+        return sendResponse(res, httpStatus.BAD_REQUEST, false, null, errors, errors[Object.keys(errors)[0]], null);
     } else {
         next();
     }

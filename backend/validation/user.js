@@ -71,7 +71,7 @@ validations.validateLoginInput = (req, res, next) => {
     ];
     const errors = validateHelper.validation(data, validateArray);
     if (!isEmpty(errors)) {
-        return sendResponse(res, httpStatus.BAD_REQUEST, false, null, errors, 'invalid input', null);
+        return sendResponse(res, httpStatus.BAD_REQUEST, false, null, errors, errors[Object.keys(errors)[0]], null);
     } else {
         next();
     }
@@ -125,7 +125,7 @@ validations.validateRegisterInput = (req, res, next) => {
     const errors = validateHelper.validation(data, validateArray);
     if (!isEmpty(errors)) {
         
-        return sendResponse(res, httpStatus.BAD_REQUEST, false, null, errors, 'invalid input', null);
+        return sendResponse(res, httpStatus.BAD_REQUEST, false, null, errors, errors[Object.keys(errors)[0]], null);
     } else {
         next();
     }
