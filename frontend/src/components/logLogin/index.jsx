@@ -10,6 +10,7 @@ export default function LogLogin() {
     const [status, setStatus] = useState('');
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('');
+    const [change, setChange] = useState(false);
     const auth = useAuth();
 
     const formatTime = (str) => {
@@ -47,10 +48,36 @@ export default function LogLogin() {
 
     useEffect(() => {
         sendRequestGetData();
-    }, [sendRequestGetData]);
+    }, [change,sendRequestGetData]);
 
     const handleClose = () => {
         setOpen(false);
+    }
+
+    const sendRequestRemoveToken = async(id)=>{
+        try {
+            const response = await fetch(`${auth.urlAPI}/api/v1/user/remove_token`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": auth.token
+              },
+              body:JSON.stringify({
+                id: id
+              })
+            })
+            const res = await response.json();
+            if (res.success) {
+              setMessage(res.msg);
+              setStatus('success');
+              setChange(!change);
+              setOpen(true);
+            } else {
+              throw new Error(res.message);
+            }
+          } catch (err) {
+            console.error(err);
+          }
     }
 
     if (load) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -88,7 +115,7 @@ export default function LogLogin() {
                             row.is_active ? <text style={{ color: 'green' }}>Active</text> : <text style={{ color: 'red' }}>Inactive</text>
                         }</TableCell>
                         <TableCell align="center">
-                            {row.is_active ? <Button variant="contained">Logout</Button> : <></>}
+                            {row.is_active ? <Button onClick={sendRequestRemoveToken(row._id)} variant="contained">Logout</Button> : <></>}
                         </TableCell>
                     </TableRow>
                 ))}
