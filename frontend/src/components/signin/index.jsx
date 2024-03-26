@@ -11,6 +11,7 @@ const theme = createTheme();
 
 const Signin = () => {
     const navigate = useNavigate();
+    const [status, setStatus] = useState('');
     const [input, setInput] = useState({
         email: "",
         password: "",
@@ -35,27 +36,16 @@ const Signin = () => {
 
     const auth = useAuth();
 
-    const handleSubmitEvent = async(e) => {
+    const handleSubmitEvent = async (e) => {
         e.preventDefault()
-        if (input.email !== "" && input.password !== "" && input.name !== "") {
-            const res = await auth.signinAction(input);
-            if (!res.success) {
-                setMessage(res.message);
-                setOpen(true);
-                const timeoutId = setTimeout(() => {
-                    setOpen(false);
-                }, 3000);
-                return () => clearTimeout(timeoutId);
-            }
-            return;
-        } else {
-            setMessage("Nhập Đủ Thông Tin")
-            setOpen(true);
-            const timeoutId = setTimeout(() => {
-                setOpen(false);
-            }, 3000);
-            return () => clearTimeout(timeoutId);
-        }
+        const res = await auth.signinAction(input);
+        if (!res.success) 
+            setStatus('warning');
+        else 
+            setStatus('success');
+        
+        setMessage(res.msg);
+        setOpen(true);
     }
 
     const handleInput = (e) => {
@@ -67,7 +57,7 @@ const Signin = () => {
     }
 
 
-    if(auth.token) return navigate('/');
+    if (auth.token) return navigate('/');
     return (
         <>
             <Helmet>
@@ -85,7 +75,7 @@ const Signin = () => {
                         }}
                     >
                         <Typography component="h1" variant="h5">
-                            Đăng nhập
+                            Đăng kí
                         </Typography>
                         <Box
                             component="form"
@@ -145,7 +135,7 @@ const Signin = () => {
                 </Container>
             </ThemeProvider>
             <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="warning">
+                <Alert onClose={handleClose} severity={status}>
                     {message}
                 </Alert>
             </Snackbar>

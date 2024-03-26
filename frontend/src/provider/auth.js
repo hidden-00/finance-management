@@ -69,15 +69,14 @@ const AuthProvider = ({ children }) => {
             })
             const res = await response.json()
             if (res.success) {
-                navigate('/login')
                 return res;
             } else {
-                if (res.errors.keyPattern.email) {
-                    res.message = "Email tồn tại"
+                if (res.errors.keyPattern?.email) {
+                    res.msg = "Email tồn tại"
                     return res;
                 }
             }
-            throw new Error(res.message);
+            return res;
         } catch (err) {
             console.error(err);
         }
