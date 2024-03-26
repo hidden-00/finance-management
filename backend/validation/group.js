@@ -77,7 +77,7 @@ validations.validatePost = (req, res, next)=>{
                 {
                     condition: 'IsLength',
                     msg: 'This field should be between 2 to 100',
-                    option: { min: 2, max: 30 },
+                    option: { min: 2, max: 100 },
                 },
             ],
         },
@@ -91,7 +91,7 @@ validations.validatePost = (req, res, next)=>{
                 {
                     condition: 'IsLength',
                     msg: 'This field should be between 2 to 100',
-                    option: { min: 2, max: 30 },
+                    option: { min: 2, max: 100 },
                 },
             ],
         },
