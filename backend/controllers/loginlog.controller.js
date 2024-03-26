@@ -20,7 +20,8 @@ loginlogController.logout = async(req, res, next)=>{
     try{
         const {id} = req.body;
         const user_id = req.user._id;
-        const save = await loginLog.findOneAndUpdate({id, user_id, is_active: true}, {$set:{is_active: false}}, {new: true});
+        const save = await loginLog.findOneAndUpdate({_id:id, user_id, is_active: true}, {$set:{is_active: false}}, {new: true});
+        console.log(save)
         return sendResponse(res, httpStatus.OK, save?true: false, save, null, 'Logout success', null);
     }catch(err){
         next(err);
