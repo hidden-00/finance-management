@@ -115,7 +115,7 @@ export default function LogLogin() {
                             row.is_active ? <text style={{ color: 'green' }}>Active</text> : <text style={{ color: 'red' }}>Inactive</text>
                         }</TableCell>
                         <TableCell align="center">
-                            {row.is_active ? <Button onClick={sendRequestRemoveToken(row._id)} variant="contained">Logout</Button> : <></>}
+                            {row.is_active ? <Button onClick={()=>{sendRequestRemoveToken(row._id)}} variant="contained">Logout</Button> : <></>}
                         </TableCell>
                     </TableRow>
                 ))}
