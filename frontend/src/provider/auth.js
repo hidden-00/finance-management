@@ -30,7 +30,7 @@ const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error(error);
         }
-    },[urlAPI, token, navigate])
+    },[urlAPI, token])
 
     useEffect(() => {
         fetchData();

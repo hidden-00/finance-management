@@ -31,8 +31,40 @@ export default function Header() {
     const [message, setMessage] = useState('');
     const [status, setStatus] = useState('');
     const [open, setOpen] = useState(false);
-    const [add, setAdd] = useState(false);
     const [load, setLoad] = useState(false);
+    const [shouldFetchData, setShouldFetchData] = useState(false);
+
+    const sendRequestAddGroup = async () => {
+        try {
+            const response = await fetch(`${auth.urlAPI}/api/v1/group`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": auth.token
+                },
+                body: JSON.stringify({
+                    name: input.name,
+                    description: input.description,
+                })
+            })
+            const res = await response.json();
+            if (res.success) {
+                setStatus('success');
+                setOpen(true)
+                setMessage(res.msg);
+                handleDrawerClose();
+                setForm(false);
+                setShouldFetchData(true);
+            } else {
+                setStatus('warning');
+                setOpen(true)
+                setMessage(res.msg);
+                throw new Error(res.msg);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
 
     const fetchData = useCallback(async () => {
         try {
@@ -58,8 +90,15 @@ export default function Header() {
     }, [auth.token, auth.urlAPI])
 
     useEffect(() => {
-        fetchData();
-    }, [add, fetchData])
+        if (shouldFetchData) {
+            fetchData();
+            setShouldFetchData(false); // Đặt lại trạng thái shouldFetchData để tránh việc lặp lại việc fetch data
+        }
+    }, [fetchData, shouldFetchData])
+    
+    useEffect(() => {
+        fetchData(); // Fetch data ban đầu khi component được render
+    }, [fetchData])
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -103,37 +142,7 @@ export default function Header() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setAdd(true);
         await sendRequestAddGroup();
-        setAdd(false)
-        setForm(false);
-    }
-
-    const sendRequestAddGroup = async () => {
-        try {
-            const response = await fetch(`${auth.urlAPI}/api/v1/group`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": auth.token
-                },
-                body: JSON.stringify({
-                    name: input.name,
-                    description: input.description,
-                })
-            })
-            const res = await response.json();
-            if (res.success) {
-                setStatus('success');
-                setOpen(true)
-                setMessage(res.msg);
-                handleDrawerClose();
-            } else {
-                throw new Error(res.msg);
-            }
-        } catch (err) {
-            console.error(err);
-        }
     }
 
     if (load) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -221,8 +230,8 @@ export default function Header() {
                                 onClose={handleClose}
                             >
                                 <MenuItem onClick={() => { navigate('/profile') }}>Profile</MenuItem>
-                                <MenuItem onClick={() => { auth.logOut() }}>Logout</MenuItem>
                                 <MenuItem onClick={() => { navigate('/logs') }}>Log Login</MenuItem>
+                                <MenuItem onClick={() => { auth.logOut() }}>Logout</MenuItem>
                             </Menu>
                         </div>
                     </Toolbar>
