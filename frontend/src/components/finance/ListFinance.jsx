@@ -244,6 +244,9 @@ const ListFinance = () => {
         setForm(false);
         setChange(!change);
       } else {
+        setStatus('warning');
+        setMessage(res.msg);
+        setOpen(true);
         throw new Error(res.msg);
       }
     } catch (err) {
