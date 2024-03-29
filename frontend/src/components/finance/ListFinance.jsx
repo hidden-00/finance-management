@@ -27,7 +27,6 @@ const ListFinance = () => {
   const [load, setLoad] = useState(false);
   const nameRef = useRef();
   const descriptionRef = useRef();
-  const [loadButton, setLoadButton] = useState(false);
 
   const navigate = useNavigate();
 
@@ -177,7 +176,7 @@ const ListFinance = () => {
     setFormMember(false);
   }
 
-  const [input, setInput] = React.useState({
+  const [input, setInput] = useState({
     name: "",
     mon_hang: "",
     money: "",
@@ -185,8 +184,18 @@ const ListFinance = () => {
     email: "",
   })
 
-  const [selectedMethod, setSelectedMethod] = React.useState(null);
-  const [selectedType, setSelectedType] = React.useState(null);
+  const [selectedMethod, setSelectedMethod] = useState(null);
+  const [selectedType, setSelectedType] = useState(null);
+
+  const setDefault = ()=>{
+    setInput({name: "",
+    mon_hang: "",
+    money: "",
+    place: "",
+    email: "",})
+    setSelectedMethod(null);
+    setSelectedType(null);
+  }
 
   const handleMethodChange = (event, newValue) => {
     setSelectedMethod(newValue);
@@ -242,6 +251,7 @@ const ListFinance = () => {
         setOpen(true)
         setMessage(res.msg);
         setForm(false);
+        setDefault();
         setChange(!change);
       } else {
         setStatus('warning');
@@ -256,9 +266,9 @@ const ListFinance = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoadButton(true);
+    setLoad(true);
     await sendRequestInsert();
-    setLoadButton(false);
+    setLoad(false);
   }
 
   const handleSubmitAddMember = async (e) => {
@@ -481,7 +491,7 @@ const ListFinance = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseForm}>Hủy</Button>
-            <Button onLoad={loadButton} color="primary" onClick={handleSubmit}>Lưu</Button>
+            <Button color="primary" onClick={handleSubmit}>Lưu</Button>
           </DialogActions>
         </Dialog>
         <Dialog open={formAdd} onClose={handleCloseFormAddMember}>
