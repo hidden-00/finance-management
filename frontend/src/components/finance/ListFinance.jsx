@@ -252,8 +252,9 @@ const ListFinance = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoad(true);
     await sendRequestInsert();
-
+    setLoad(false);
   }
 
   const handleSubmitAddMember = async (e) => {
