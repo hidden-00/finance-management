@@ -27,6 +27,7 @@ const ListFinance = () => {
   const [load, setLoad] = useState(false);
   const nameRef = useRef();
   const descriptionRef = useRef();
+  const [loadButton, setLoadButton] = useState(false);
 
   const navigate = useNavigate();
 
@@ -252,9 +253,9 @@ const ListFinance = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoad(true);
+    setLoadButton(true);
     await sendRequestInsert();
-    setLoad(false);
+    setLoadButton(false);
   }
 
   const handleSubmitAddMember = async (e) => {
@@ -477,7 +478,7 @@ const ListFinance = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseForm}>Hủy</Button>
-            <Button color="primary" onClick={handleSubmit}>Lưu</Button>
+            <Button onLoad={loadButton} color="primary" onClick={handleSubmit}>Lưu</Button>
           </DialogActions>
         </Dialog>
         <Dialog open={formAdd} onClose={handleCloseFormAddMember}>
