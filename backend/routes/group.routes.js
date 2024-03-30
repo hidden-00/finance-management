@@ -10,5 +10,6 @@ router.get('/:id', auth.authentication, groupController.getFinance);
 router.post('/add', auth.authentication, validateGroup.sanitizeEmail, validateGroup.validateEmail,groupController.addMember);
 router.post('/delete/:id', auth.authentication, groupController.deleteGroup);
 router.post('/update', auth.authentication,validateGroup.sanitizePost, validateGroup.validatePost, groupController.edit);
+router.post('/remove_member', auth.authentication, groupController.removeMember);
 
 module.exports = router

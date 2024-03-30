@@ -81,6 +81,23 @@ groupController.deleteGroup = async (req, res, next) => {
     }
 }
 
+groupController.removeMember = async(req, res, next)=>{
+    try{
+        const {user_id, group_id} = req.body;
+        const my_id = req.user._id;
+        if(user_id===my_id) return sendResponse(res, httpStatus.INTERNAL_SERVER_ERROR, false, null, null, 'Cannot remove me', null);
+        const group = await groupModel.findOne({_id: group_id, leader: my_id});
+        if(!group){
+            return sendResponse(res, httpStatus.UNAUTHORIZED, false, null, null, 'Cannot found Group or You are not leader', null);
+        }
+        group.members = group.members.filter((e)=> e.toString()!==user_id);
+        await group.save();
+        return sendResponse(res, httpStatus.OK, true, group, null, 'Remove success', null);
+    }catch(err){
+        next(err);
+    }
+}
+
 groupController.addMember = async (req, res, next) => {
     try {
         const { email, group_id } = req.body;
