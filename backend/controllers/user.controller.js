@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const loginlogController = require('./loginlog.controller');
 const loginlogModel = require('../models/loginlog.model');
+const userModel = require('../models/user.model');
 const UserController = {}
 
 UserController.createOne = async(req, res, next)=>{
@@ -83,6 +84,37 @@ UserController.logout = async(req, res, next)=>{
         }
     }catch(err){
         next(err)
+    }
+}
+
+UserController.changeInfo = async(req, res, next)=>{
+    try{
+        const {email, name} = req.body;
+        const id = req.user._id;
+        const newMe = await userModel.findByIdAndUpdate(id, {$set:{email, name}}, {new: true});
+        return sendResponse(res, httpStatus.OK, true, newMe, null, 'Change success', null);
+    }catch(err){
+        next(err);
+    }
+}
+
+UserController.changePassword = async(req, res, next)=>{
+    try{
+        const {oldPassword, newPassword} = req.body;
+        const id = req.user._id;
+        const me = await userModel.findById(id);
+        if(!me) return sendResponse(res, httpStatus.NOT_FOUND, false, null, null, 'Cannot found me', null);
+        const match = await bcrypt.compare(oldPassword, me.password);
+        if(match){
+            const password = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(10));
+            me.password = password;
+            await me.save();
+            return sendResponse(res, httpStatus.OK, true, me, null, 'Change password success', null);
+        }else{
+            return sendResponse(res, httpStatus.UNAUTHORIZED, false, null, null, 'Old Password Not Correct');
+        }
+    }catch(err){
+        next(err);
     }
 }
 
