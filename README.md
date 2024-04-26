@@ -10,5 +10,7 @@ The website provides tools for users to manage personal or group finances.
 
 - Manage personal finance
 - Group financial management
+- Supports calling 3rd party APIs
+- 3rd party auto API tool
 
 The source code is designed to serve both individuals and groups. You can create your own group and invite other members to your financial group, sharing personal financial income and expenses together in groups.
