@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useAuth } from '../../provider/auth'
-import Button from '@mui/material/Button'
 import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar';
 import { Box, Container, CssBaseline, TextField, ThemeProvider, Typography, createTheme } from '@mui/material';
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
+import { Button } from 'react-windows-ui';
 
 const theme = createTheme();
 
@@ -39,11 +39,11 @@ const Signin = () => {
     const handleSubmitEvent = async (e) => {
         e.preventDefault()
         const res = await auth.signinAction(input);
-        if (!res.success) 
+        if (!res.success)
             setStatus('warning');
-        else 
+        else
             setStatus('success');
-        
+
         setMessage(res.msg);
         setOpen(true);
     }
@@ -116,20 +116,25 @@ const Signin = () => {
                                 autoComplete="current-name"
                                 onChange={handleInput}
                             />
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2, mr: 1, width: "45%" }}
-                            >
-                                Đăng kí
-                            </Button>
-                            <Button
-                                onClick={handleLogin}
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2, ml: 1, width: "45%" }}
-                            >
-                                Đăng nhập
-                            </Button>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Button
+                                        style={{ margin: '20px' }}
+                                        value='Register'
+                                        type="primary"
+                                        icon={<i className="icons10-home"></i>}
+                                        onClick={handleSubmitEvent}
+                                    />
+                                    <Button
+                                        style={{ margin: '20px' }}
+                                        value='Login'
+                                        type="primary-outline"
+                                        icon={<i className="icons10-share"></i>}
+                                        onClick={handleLogin}
+                                    />
+
+                                </div>
+                            </div>
                         </Box>
                     </Box>
                 </Container>

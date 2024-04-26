@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { useAuth } from '../../provider/auth'
-import Button from '@mui/material/Button'
-import Alert from '@mui/material/Alert'
-import Snackbar from '@mui/material/Snackbar';
+import { Alert, Button, LoaderBusy } from "react-windows-ui";
 import { Box, Container, CssBaseline, TextField, ThemeProvider, Typography, createTheme } from '@mui/material';
-import {Helmet} from 'react-helmet'
-import {useNavigate} from 'react-router-dom'
+import { Helmet } from 'react-helmet'
+import { useNavigate } from 'react-router-dom'
 
 const theme = createTheme();
 
@@ -16,39 +14,32 @@ const Login = () => {
         password: "",
     })
     const [message, setMessage] = useState('');
-
+    const [load, setLoad] = useState(false);
     const [open, setOpen] = useState(false);
-
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setOpen(false);
-    };
+    const [checklogin, setChecklogin] = useState(false);
+    const [response, setResponse] = useState(null);
 
     const handleRegistration = () => {
-        // Xử lý các logic đăng ký ở đây
-    
-        // Chuyển hướng đến trang đăng ký thành công (ví dụ '/registration-success')
         navigate('/signin');
-      };
+    };
 
     const auth = useAuth();
 
-    const handleSubmitEvent = async(e) => {
+    const handleSubmitEvent = async (e) => {
         e.preventDefault()
-        if (input.email !== "" && input.password !== "") {
-            const res = await auth.loginAction(input);
-            if(!res.success){
+        setLoad(true);
+        const res = await auth.loginAction(input);
+        setTimeout(() => {
+            setLoad(false);
+            if (!res.success) {
                 setMessage(res.msg);
                 setOpen(true);
+            } else {
+                setMessage(res.msg);
+                setChecklogin(true);
+                setResponse(res);
             }
-            return;
-        } else {
-            setOpen(true);
-            setMessage('Nhập đủ thông tin')
-        }
+        }, 500);
     }
 
     const handleInput = (e) => {
@@ -60,9 +51,15 @@ const Login = () => {
     }
 
 
-    if(auth.token) return navigate('/');
+    if (auth.token) return navigate('/');
+
     return (
         <>
+            <LoaderBusy
+                isLoading={load}
+                display="overlay"
+                onBackdropPress={() => { }}
+            />
             <Helmet>
                 <title>Login</title>
             </Helmet>
@@ -108,30 +105,83 @@ const Login = () => {
                                 autoComplete="current-password"
                                 onChange={handleInput}
                             />
-                            <Button
-                                type="submit"
-                                
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2, mr: 1, width:"45%" }}
-                            >
-                                Đăng nhập
-                            </Button>
-                            <Button
-                                onClick={handleRegistration}
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2,ml: 1,width:"45%" }}
-                            >
-                                Đăng kí
-                            </Button>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Button
+                                        style={{ margin: '20px' }}
+                                        value='Login'
+                                        type="primary"
+                                        icon={<i className="icons10-home"></i>}
+                                        onClick={handleSubmitEvent}
+                                    />
+                                    <Button
+                                        style={{ margin: '20px' }}
+                                        value='Register'
+                                        type="primary-outline"
+                                        icon={<i className="icons10-share"></i>}
+                                        onClick={handleRegistration}
+                                    />
+                                </div>
+                            </div>
+
                         </Box>
                     </Box>
                 </Container>
             </ThemeProvider>
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="warning">
-                    {message}
-                </Alert>
-            </Snackbar>
+            <Alert
+                isVisible={open}
+                onBackdropPress={() => { }}>
+                <Alert.Header>
+                    <p style={{ padding: 10 }}>
+                        {message}
+                    </p>
+                </Alert.Header>
+                <Alert.Footer>
+                    <Button
+                        type="primary"
+                        value="OK"
+                        onClick={() => { setOpen(false) }}
+                    />
+                </Alert.Footer>
+            </Alert>
+            <Alert
+                isVisible={open}
+                onBackdropPress={() => { }}>
+                <Alert.Header>
+                    <p style={{ padding: 10 }}>
+                        {message}
+                    </p>
+                </Alert.Header>
+                <Alert.Footer>
+                    <Button
+                        type="primary"
+                        value="OK"
+                        onClick={() => { setOpen(false) }}
+                    />
+                </Alert.Footer>
+            </Alert>
+            <Alert
+                isVisible={checklogin}
+                onBackdropPress={() => { }}>
+                <Alert.Header>
+                    <p style={{ padding: 10 }}>
+                        {message}
+                    </p>
+                </Alert.Header>
+                <Alert.Footer>
+                    <Button
+                        type="primary"
+                        value="OK"
+                        onClick={() => {
+                            setChecklogin(false);
+                            auth.setUser(response.data);
+                            auth.setToken(response.token);
+                            localStorage.setItem("site", response.token)
+                            navigate('/dashboard')
+                        }}
+                    />
+                </Alert.Footer>
+            </Alert>
         </>
     )
 

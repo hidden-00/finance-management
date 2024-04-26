@@ -6,8 +6,8 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('site') || "");
-    const urlAPI = `https://finance-management-zviq.onrender.com`;
-    // const urlAPI = `http://localhost:5050`;
+    // const urlAPI = `https://finance-management-zviq.onrender.com`;
+    const urlAPI = `http://localhost:5050`;
     const navigate = useNavigate();
 
     const fetchData = useCallback(async () => {
@@ -47,12 +47,6 @@ const AuthProvider = ({ children }) => {
                 body: JSON.stringify(data)
             })
             const res = await response.json()
-            if (res.success) {
-                setUser(res.data);
-                setToken(res.token);
-                localStorage.setItem("site", res.token)
-                navigate('/dashboard')
-            }
             return res;
         } catch (err) {
             console.error(err);
@@ -68,15 +62,7 @@ const AuthProvider = ({ children }) => {
                 },
                 body: JSON.stringify(data)
             })
-            const res = await response.json()
-            if (res.success) {
-                return res;
-            } else {
-                if (res.errors.keyPattern?.email) {
-                    res.msg = "Email tồn tại"
-                    return res;
-                }
-            }
+            const res = await response.json();
             return res;
         } catch (err) {
             console.error(err);
@@ -104,7 +90,7 @@ const AuthProvider = ({ children }) => {
             console.error(err);
         }
     }
-    return <AuthContext.Provider value={{ token, user, loginAction, logOut, signinAction, urlAPI }}>{children}</AuthContext.Provider>
+    return <AuthContext.Provider value={{setUser, setToken, token, user, loginAction, logOut, signinAction, urlAPI }}>{children}</AuthContext.Provider>
 }
 
 export default AuthProvider;

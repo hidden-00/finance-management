@@ -8,6 +8,9 @@ import Signin from './components/signin';
 import ListFinance from './components/finance/ListFinance';
 import Profile from './components/profile';
 import LogLogin from './components/logLogin';
+import "react-windows-ui/config/app-config.css";
+import "react-windows-ui/dist/react-windows-ui.min.css";
+import "react-windows-ui/icons/winui-icons.min.css";
 
 function App() {
   return (

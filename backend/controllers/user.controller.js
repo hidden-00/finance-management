@@ -8,48 +8,55 @@ const loginlogModel = require('../models/loginlog.model');
 const userModel = require('../models/user.model');
 const UserController = {}
 
-UserController.createOne = async(req, res, next)=>{
-    try{
-        const {email, password, name} = req.body;
-        let hashPass = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-        const user = new User({email, password: hashPass, name});
-        const save =  await User.create(user);
-        return sendResponse(res, httpStatus.OK, true, save, null, 'Đăng kí thành công', null)
-    }catch(err){
+UserController.createOne = async (req, res, next) => {
+    try {
+        const { email, password, name } = req.body;
+        const checkuser = await User.findOne({ email: email });
+        if (checkuser) {
+            const errors = { email: 'Email already exists' };
+            const data = { email: email };
+            return sendResponse(res, httpStatus.CONFLICT, false, data, errors, errors.email, null);
+        } else {
+            let hashPass = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+            const user = new User({ email, password: hashPass, name });
+            const save = await User.create(user);
+            return sendResponse(res, httpStatus.OK, true, save, null, 'Đăng kí thành công', null)
+        }
+    } catch (err) {
         next(err);
     }
 }
 
-UserController.getAll = async(req, res, next)=>{
-    try{
-        const listUser = await User.find({},{password:0});
+UserController.getAll = async (req, res, next) => {
+    try {
+        const listUser = await User.find({}, { password: 0 });
         return sendResponse(res, httpStatus.OK, true, listUser, null, 'get all user success', null);
-    }catch(err){
+    } catch (err) {
         next(err)
     }
 }
 
-UserController.getMe = async(req, res, next)=>{
-    try{
+UserController.getMe = async (req, res, next) => {
+    try {
         const _id = req.user._id;
-        const me = await User.findById(_id,{password:0});
+        const me = await User.findById(_id, { password: 0 });
         return sendResponse(res, httpStatus.OK, true, me, null, 'get me success', null);
-    }catch(err){
+    } catch (err) {
         next(err);
     }
 }
 
-UserController.login = async(req, res, next)=>{
-    try{
+UserController.login = async (req, res, next) => {
+    try {
         let errors = {};
-        const {email, password} = req.body;
-        const user = await User.findOne({email: email.toLowerCase()})
-        if(!user){
+        const { email, password } = req.body;
+        const user = await User.findOne({ email: email.toLowerCase() })
+        if (!user) {
             errors.email = 'Email not found';
             return sendResponse(res, httpStatus.NOT_FOUND, false, null, errors, errors.email, null);
-        }else{
+        } else {
             const isMatch = bcrypt.compareSync(password, user.password);
-            if(isMatch){
+            if (isMatch) {
                 const payload = {
                     _id: user._id,
                     email: user.email,
@@ -61,59 +68,59 @@ UserController.login = async(req, res, next)=>{
                 //save loginlog
                 await loginlogController.insertOne(req, token, next);
                 token = `Bearer ${token}`
-                return sendResponse(res, httpStatus.OK, true, payload, null, null, token);
-            }else{
+                return sendResponse(res, httpStatus.OK, true, payload, null, "Login success", token);
+            } else {
                 errors.password = 'Password incorrect';
                 return sendResponse(res, httpStatus.BAD_REQUEST, false, null, errors, errors.password, null);
             }
         }
-    }catch(err){
+    } catch (err) {
         next(err)
     }
 }
 
-UserController.logout = async(req, res, next)=>{
-    try{
+UserController.logout = async (req, res, next) => {
+    try {
         let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers.authorization || req.headers.token;
         token = token.replace('Bearer ', '');
-        let inactiveLog = await loginlogModel.findOneAndUpdate({token}, {$set:{is_active: false, logout_date: Date.now()}});
-        if(inactiveLog){
+        let inactiveLog = await loginlogModel.findOneAndUpdate({ token }, { $set: { is_active: false, logout_date: Date.now() } });
+        if (inactiveLog) {
             return sendResponse(res, httpStatus.OK, true, null, null, 'Logged out', null);
-        }else{
+        } else {
             return sendResponse(res, httpStatus.OK, false, null, null, 'Logged out', null);
         }
-    }catch(err){
+    } catch (err) {
         next(err)
     }
 }
 
-UserController.changeInfo = async(req, res, next)=>{
-    try{
-        const {email, name} = req.body;
+UserController.changeInfo = async (req, res, next) => {
+    try {
+        const { email, name } = req.body;
         const id = req.user._id;
-        const newMe = await userModel.findByIdAndUpdate(id, {$set:{email, name}}, {new: true});
+        const newMe = await userModel.findByIdAndUpdate(id, { $set: { email, name } }, { new: true });
         return sendResponse(res, httpStatus.OK, true, newMe, null, 'Change success', null);
-    }catch(err){
+    } catch (err) {
         next(err);
     }
 }
 
-UserController.changePassword = async(req, res, next)=>{
-    try{
-        const {oldPassword, newPassword} = req.body;
+UserController.changePassword = async (req, res, next) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
         const id = req.user._id;
         const me = await userModel.findById(id);
-        if(!me) return sendResponse(res, httpStatus.NOT_FOUND, false, null, null, 'Cannot found me', null);
+        if (!me) return sendResponse(res, httpStatus.NOT_FOUND, false, null, null, 'Cannot found me', null);
         const match = await bcrypt.compare(oldPassword, me.password);
-        if(match){
+        if (match) {
             const password = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(10));
             me.password = password;
             await me.save();
             return sendResponse(res, httpStatus.OK, true, me, null, 'Change password success', null);
-        }else{
+        } else {
             return sendResponse(res, httpStatus.UNAUTHORIZED, false, null, null, 'Old Password Not Correct');
         }
-    }catch(err){
+    } catch (err) {
         next(err);
     }
 }

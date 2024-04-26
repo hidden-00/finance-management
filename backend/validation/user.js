@@ -46,7 +46,7 @@ validations.validateLoginInput = (req, res, next) => {
             validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required',
+                    msg: 'Email is required',
                 },
                 {
                     condition: 'IsEmail',
@@ -59,7 +59,7 @@ validations.validateLoginInput = (req, res, next) => {
             validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required',
+                    msg: 'Password is required',
                 },
                 {
                     condition: 'IsLength',
