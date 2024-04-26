@@ -72,12 +72,13 @@ validations.validatePost = (req, res, next)=>{
             field: 'money',
             validate:[
                 {
-                    condition: 'IsNumeric',
-                    msg: 'This field is Number',
-                },
-                {
                     condition: 'IsEmpty',
                     msg: 'This field is required'
+                },
+                {
+                    condition: 'IsInt',
+                    msg: 'This field is Number',
+                    option: {min: 0, max: 100000000}
                 }
             ]
         },

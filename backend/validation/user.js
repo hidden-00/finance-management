@@ -85,11 +85,11 @@ validations.validateRegisterInput = (req, res, next) => {
             validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required',
+                    msg: 'Name is required',
                 },
                 {
                     condition: 'IsLength',
-                    msg: 'This field should be between 2 to 100',
+                    msg: 'Name should be between 2 to 100',
                     option: { min: 2, max: 30 },
                 },
             ],
@@ -99,7 +99,7 @@ validations.validateRegisterInput = (req, res, next) => {
             validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required',
+                    msg: 'Email is required',
                 },
                 {
                     condition: 'IsEmail',
@@ -112,11 +112,11 @@ validations.validateRegisterInput = (req, res, next) => {
             validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required',
+                    msg: 'Password is required',
                 },
                 {
                     condition: 'IsLength',
-                    msg: 'password must be at least 6 characters, max limit 30 characters',
+                    msg: 'Password must be at least 6 characters, max limit 30 characters',
                     option: { min: 6, max: 30 },
                 },
             ],

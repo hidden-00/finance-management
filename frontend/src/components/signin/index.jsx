@@ -1,34 +1,23 @@
 import { useState } from 'react'
 import { useAuth } from '../../provider/auth'
-import Alert from '@mui/material/Alert'
-import Snackbar from '@mui/material/Snackbar';
 import { Box, Container, CssBaseline, TextField, ThemeProvider, Typography, createTheme } from '@mui/material';
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
-import { Button } from 'react-windows-ui';
+import { Alert, Button, LoaderBusy } from 'react-windows-ui';
 
 const theme = createTheme();
 
 const Signin = () => {
     const navigate = useNavigate();
-    const [status, setStatus] = useState('');
     const [input, setInput] = useState({
         email: "",
         password: "",
         name: ""
     })
-
+    const [load, setLoad] = useState(false);
     const [message, setMessage] = useState('');
-
-
     const [open, setOpen] = useState(false);
-
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpen(false);
-    };
+    const [response, setResponse] = useState(null);
 
     const handleLogin = () => {
         navigate('/login');
@@ -38,14 +27,14 @@ const Signin = () => {
 
     const handleSubmitEvent = async (e) => {
         e.preventDefault()
+        setLoad(true);
         const res = await auth.signinAction(input);
-        if (!res.success)
-            setStatus('warning');
-        else
-            setStatus('success');
-
-        setMessage(res.msg);
-        setOpen(true);
+        setTimeout(() => {
+            setMessage(res.msg);
+            setOpen(true);
+            setLoad(false);
+            setResponse(res);
+        }, 500);
     }
 
     const handleInput = (e) => {
@@ -60,6 +49,11 @@ const Signin = () => {
     if (auth.token) return navigate('/');
     return (
         <>
+            <LoaderBusy
+                isLoading={load}
+                display="overlay"
+                onBackdropPress={() => { }}
+            />
             <Helmet>
                 <title>Signin</title>
             </Helmet>
@@ -139,11 +133,25 @@ const Signin = () => {
                     </Box>
                 </Container>
             </ThemeProvider>
-            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity={status}>
-                    {message}
-                </Alert>
-            </Snackbar>
+            <Alert
+                isVisible={open}
+                onBackdropPress={() => { }}>
+                <Alert.Header>
+                    <p style={{ padding: 10 }}>
+                        {message}
+                    </p>
+                </Alert.Header>
+                <Alert.Footer>
+                    <Button
+                        type="primary"
+                        value="OK"
+                        onClick={() => { 
+                            setOpen(false) 
+                            if(response.success) navigate('/login');
+                        }}
+                    />
+                </Alert.Footer>
+            </Alert>
         </>
     )
 

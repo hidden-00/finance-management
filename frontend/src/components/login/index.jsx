@@ -31,11 +31,10 @@ const Login = () => {
         const res = await auth.loginAction(input);
         setTimeout(() => {
             setLoad(false);
+            setMessage(res.msg);
             if (!res.success) {
-                setMessage(res.msg);
                 setOpen(true);
             } else {
-                setMessage(res.msg);
                 setChecklogin(true);
                 setResponse(res);
             }
@@ -49,7 +48,6 @@ const Login = () => {
             [name]: value,
         }))
     }
-
 
     if (auth.token) return navigate('/');
 
