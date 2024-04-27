@@ -3,14 +3,8 @@ import AuthProvider from './provider/auth';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Login from './components/login';
 import PrivateRoute from './routes/PrivateRoute';
-import Dashboard from './components/dashboard';
-import Signin from './components/signin';
-import ListFinance from './components/finance/ListFinance';
-import Profile from './components/profile';
-import LogLogin from './components/logLogin';
-import "react-windows-ui/config/app-config.css";
-import "react-windows-ui/dist/react-windows-ui.min.css";
-import "react-windows-ui/icons/winui-icons.min.css";
+import Register from './components/register';
+import Feature from './components/feature';
 
 function App() {
   return (
@@ -18,16 +12,13 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path='/' element={<Navigate to={'/dashboard'}/>}/>
+            <Route path='/' element={<Navigate to={'/feature'}/>}/>
             <Route path="/login" element={<Login />} />
-            <Route path="/signin" element={<Signin />} />
+            <Route path="/register" element={<Register />} />
             <Route element={<PrivateRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path='/finance/:id' element={<ListFinance/>}/>
-              <Route path='/profile' element={<Profile/>}/>
-              <Route path='/logs' element={<LogLogin/>}/>
+              <Route path="/feature" element={<Feature />} />
             </Route>
-            <Route path='*' element={<Navigate to={'/dashboard'}/>}/>
+            <Route path='*' element={<Navigate to={'/feature'}/>}/>
           </Routes>
         </AuthProvider>
       </BrowserRouter>

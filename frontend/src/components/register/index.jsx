@@ -2,20 +2,21 @@ import { useState } from 'react'
 import { useAuth } from '../../provider/auth'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
-import { Button, Form, message, Input, Spin, Typography } from "antd";
+import { Button, Form, Input, Spin, Typography, message } from "antd";
 
-const Login = () => {
+const Register = () => {
     const navigate = useNavigate();
     const [input, setInput] = useState({
         email: "",
         password: "",
+        name: ""
     })
     const [load, setLoad] = useState(false);
     const [loadButton, setLoadButton] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
 
-    const handleRegistration = () => {
-        navigate('/register');
+    const handleLogin = () => {
+        navigate('/login');
     };
 
     const auth = useAuth();
@@ -25,7 +26,7 @@ const Login = () => {
             e.preventDefault()
             setLoadButton(true);
             setLoad(true);
-            const res = await auth.loginAction(input);
+            const res = await auth.signinAction(input);
             setTimeout(() => {
                 if (!res.success) {
                     setLoadButton(false);
@@ -34,16 +35,13 @@ const Login = () => {
                 } else {
                     messageApi.success(res.msg)
                     setTimeout(() => {
-                        auth.setUser(res.data);
-                        auth.setToken(res.token);
-                        localStorage.setItem("site", res.token)
-                        navigate('/dashboard');
+                        navigate('/login');
                     }, 1000);
                 }
             }, 500);
         } catch (err) {
             setLoad(false);
-            messageApi.warning("ERROR SERVER");
+            messageApi.error('SERVER ERROR')
         }
     }
 
@@ -55,14 +53,14 @@ const Login = () => {
         }))
     }
 
-    if (auth.token) return navigate('/');
 
+    if (auth.token) return navigate('/');
     return (
         <>
             {contextHolder}
             <Spin spinning={load} fullscreen />
             <Helmet>
-                <title>Login</title>
+                <title>Register</title>
             </Helmet>
             <Form style={{
                 width: "30%",
@@ -71,12 +69,13 @@ const Login = () => {
                 borderRadius: "5px",
                 backgroundColor: "#fff"
             }}>
-                <Typography.Title level={2} style={{ textAlign: "center", marginBottom: "20px" }}>Login</Typography.Title>
-
+                <Typography.Title level={2}>Register</Typography.Title>
                 <Typography.Title level={5}>Email</Typography.Title>
-                <Input name='email' autoFocus autoComplete='email' onChange={handleInput} placeholder='Email' />
+                <Input name='email' autoComplete='email' autoFocus onChange={handleInput} placeholder='Email' />
                 <Typography.Title level={5}>Password</Typography.Title>
-                <Input name='password' autoFocus autoComplete='current-password' onChange={handleInput} placeholder='Password' type='password' />
+                <Input name='password' autoComplete='password-current' autoFocus onChange={handleInput} type='password' placeholder='Password' />
+                <Typography.Title level={5}>Full Name</Typography.Title>
+                <Input name='name' autoComplete='name' autoFocus onChange={handleInput} placeholder='Full name' />
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                         <Button
@@ -84,18 +83,18 @@ const Login = () => {
                             type="primary"
                             loading={loadButton}
                             onClick={handleSubmitEvent}
-                        >Login</Button>
+                        >Register</Button>
                         <Button
                             style={{ margin: '20px' }}
                             type="primary"
-                            onClick={handleRegistration}
-                        >Register</Button>
+                            onClick={handleLogin}
+                        >Login</Button>
                     </div>
                 </div>
-            </Form >
+            </Form>
         </>
     )
 
 }
 
-export default Login;
+export default Register;
