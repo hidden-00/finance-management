@@ -24,12 +24,9 @@ const AuthProvider = ({ children }) => {
             if (res.success) {
                 setUser(res.data);
             } else {
-                messageApi.warning(res.msg);
-                setTimeout(() => {
-                    setToken('');
-                    localStorage.removeItem('site')
-                    setUser(null);
-                }, 500)
+                setToken('');
+                localStorage.removeItem('site')
+                setUser(null);
             }
         } catch (err) {
             messageApi.error('SERVER ERROR');

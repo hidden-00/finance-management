@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { Layout, Menu, Spin, message } from 'antd';
+import { Input, Layout, Menu, Modal, Spin, Typography, message } from 'antd';
 import { NotificationOutlined, HomeOutlined, MoneyCollectOutlined, LaptopOutlined, LogoutOutlined } from '@ant-design/icons';
 import './AdminLayout.css'; // Import file CSS tùy chỉnh
 import { useState } from 'react';
@@ -14,9 +14,23 @@ const AdminLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(true);
   const auth = useAuth();
   const [load, setLoad] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [input, setInput] = useState({
+    name: "",
+    description: "",
+  })
+  const [open, setOpen] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [groups, setGroups] = useState([]);
   const navigate = useNavigate();
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
 
   const getGroupTitle = useCallback(async () => {
     try {
@@ -49,6 +63,44 @@ const AdminLayout = ({ children }) => {
     getGroupTitle();
   }, [getGroupTitle]);
 
+  const handleInput = (e) => {
+    const { name, value } = e.target
+    setInput((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const handleOk = async (e) => {
+    try {
+      e.preventDefault()
+      setConfirmLoading(true);
+      const response = await fetch(`${auth.urlAPI}/api/v1/group`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        },
+        body: JSON.stringify(input)
+      })
+      const res = await response.json();
+      setTimeout(() => {
+        if (!res.success) {
+          setConfirmLoading(false);
+          messageApi.info(res.msg)
+        } else {
+          messageApi.success(res.msg)
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
+      }, 500);
+    } catch (err) {
+      setConfirmLoading(false);
+      messageApi.error("ERROR SERVER");
+    }
+  };
+
   return (
     <>
       {contextHolder}
@@ -72,14 +124,16 @@ const AdminLayout = ({ children }) => {
                 Feature
               </MenuItem>
               <SubMenu key="sub1" icon={<MoneyCollectOutlined />} title="Finance">
-                <Menu.Item key="1">Create Group</Menu.Item>
+                <Menu.Item key="1"
+                  onClick={showModal}
+                >Create Group</Menu.Item>
                 {groups?.map((group) => {
-                  return <Menu.Item key={groups._id}>{group.name}</Menu.Item>
+                  return <Menu.Item key={groups._id} 
+                    onClick={()=>{
+                      navigate(`/group/${group._id}`)
+                    }}
+                  >{group.name}</Menu.Item>
                 })}
-                {/* <Menu.Item key="1">Create Group</Menu.Item>
-                <Menu.Item key="2">User 2</Menu.Item>
-                <Menu.Item key="3">User 3</Menu.Item>
-                <Menu.Item key="4">User 4</Menu.Item> */}
               </SubMenu>
               <SubMenu key="sub2" icon={<LaptopOutlined />} title="Device">
                 <Menu.Item key="5">Device 1</Menu.Item>
@@ -136,6 +190,19 @@ const AdminLayout = ({ children }) => {
           </Layout>
         </Layout>
       </Layout>
+      <Modal
+        title="New Group"
+        open={open}
+        onCancel={handleCancel}
+        confirmLoading={confirmLoading}
+        onOk={handleOk}
+      >
+        <p>Add new Group Finance</p>
+        <Typography.Title level={5}>Name Group</Typography.Title>
+        <Input name='name' autoFocus placeholder='Name Group' onChange={handleInput} />
+        <Typography.Title level={5}>Description</Typography.Title>
+        <Input name='description' autoFocus placeholder='Description' onChange={handleInput} />
+      </Modal>
     </>
 
   );

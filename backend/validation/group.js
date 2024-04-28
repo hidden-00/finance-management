@@ -72,11 +72,11 @@ validations.validatePost = (req, res, next)=>{
             validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required',
+                    msg: 'Name Group is required',
                 },
                 {
                     condition: 'IsLength',
-                    msg: 'This field should be between 2 to 100',
+                    msg: 'Name should be between 2 to 100',
                     option: { min: 2, max:  100},
                 },
             ],
@@ -86,11 +86,11 @@ validations.validatePost = (req, res, next)=>{
             validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required',
+                    msg: 'Description is required',
                 },
                 {
                     condition: 'IsLength',
-                    msg: 'This field should be between 2 to 100',
+                    msg: 'Description should be between 2 to 100',
                     option: { min: 2, max: 100 },
                 },
             ],
