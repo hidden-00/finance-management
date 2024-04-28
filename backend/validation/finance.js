@@ -6,7 +6,7 @@ const isEmpty = require('./isEmpty');
 
 const validations = {};
 
-validations.sanitizePost = (req, res, next)=>{
+validations.sanitizePost = (req, res, next) => {
     const sanitizeArray = [
         {
             field: 'name',
@@ -37,7 +37,7 @@ validations.sanitizePost = (req, res, next)=>{
     next();
 }
 
-validations.validatePost = (req, res, next)=>{
+validations.validatePost = (req, res, next) => {
     const data = req.body;
     const validateArray = [
         {
@@ -45,11 +45,11 @@ validations.validatePost = (req, res, next)=>{
             validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required',
+                    msg: 'Name is required',
                 },
                 {
                     condition: 'IsLength',
-                    msg: 'This field should be between 2 to 100',
+                    msg: 'Name should be between 2 to 100',
                     option: { min: 2, max: 30 },
                 },
             ],
@@ -59,26 +59,26 @@ validations.validatePost = (req, res, next)=>{
             validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required',
+                    msg: 'Name Product is required',
                 },
                 {
                     condition: 'IsLength',
-                    msg: 'This field should be between 2 to 100',
+                    msg: 'Name Product should be between 2 to 100',
                     option: { min: 2, max: 30 },
                 },
             ],
         },
         {
             field: 'money',
-            validate:[
+            validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required'
+                    msg: 'Price is required'
                 },
                 {
                     condition: 'IsInt',
-                    msg: 'This field is Number',
-                    option: {min: 0, max: 100000000}
+                    msg: 'Price is Number',
+                    option: { min: 0, max: 100000000 }
                 }
             ]
         },
@@ -87,15 +87,56 @@ validations.validatePost = (req, res, next)=>{
             validate: [
                 {
                     condition: 'IsEmpty',
-                    msg: 'This field is required',
+                    msg: 'Place is required',
                 },
                 {
                     condition: 'IsLength',
-                    msg: 'This field should be between 2 to 100',
+                    msg: 'Place should be between 2 to 100',
                     option: { min: 2, max: 30 },
                 },
             ],
         },
+        {
+            field: 'group',
+            validate: [
+                {
+                    condition: 'IsEmpty',
+                    msg: 'Group ID is required'
+                },
+                {
+                    condition: 'IsMongoId',
+                    msg: 'Group Id should is MongoId'
+                }
+            ]
+        },
+        {
+            field: 'type',
+            validate: [
+                {
+                    condition: 'IsEmpty',
+                    msg: 'Type is required'
+                },
+                {
+                    condition: 'IsIn',
+                    msg: 'Please enter Valid Type',
+                    option: ['Nợ', 'Thu', 'Chi']
+                }
+            ]
+        },
+        {
+            field: 'method',
+            validate: [
+                {
+                    condition: 'IsEmpty',
+                    msg: 'Method is required'
+                },
+                {
+                    condition: 'IsIn',
+                    msg: 'Please enter Valid Method',
+                    option: ['Tiền mặt', 'Vietcombank', 'Timo', 'Momo']
+                }
+            ]
+        }
     ];
     const errors = validateHelper.validation(data, validateArray);
     if (!isEmpty(errors)) {

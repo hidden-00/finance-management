@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { Input, Layout, Menu, Modal, Spin, Typography, message } from 'antd';
-import { NotificationOutlined, HomeOutlined, MoneyCollectOutlined, LaptopOutlined, LogoutOutlined } from '@ant-design/icons';
+import { NotificationOutlined, HomeOutlined, MoneyCollectOutlined, LinuxOutlined, WechatWorkOutlined, LogoutOutlined } from '@ant-design/icons';
 import './AdminLayout.css'; // Import file CSS tùy chỉnh
 import { useState } from 'react';
 import MenuItem from 'antd/es/menu/MenuItem';
@@ -19,6 +19,7 @@ const AdminLayout = ({ children }) => {
     name: "",
     description: "",
   })
+  const [select, setSelect] = useState('');
   const [open, setOpen] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [groups, setGroups] = useState([]);
@@ -44,7 +45,6 @@ const AdminLayout = ({ children }) => {
       });
       const res = await response.json();
       if (res.success) {
-        messageApi.success(res.msg);
         setGroups(res.data.groups);
       } else {
         messageApi.info(res.msg);
@@ -61,7 +61,9 @@ const AdminLayout = ({ children }) => {
 
   useEffect(() => {
     getGroupTitle();
-  }, [getGroupTitle]);
+    const url = window.location.href;
+    setSelect(url.split('/').at(url.split('/').length - 1));
+  }, [getGroupTitle, window.location.href]);
 
   const handleInput = (e) => {
     const { name, value } = e.target
@@ -115,37 +117,36 @@ const AdminLayout = ({ children }) => {
             </div>
             <Menu
               mode="inline"
-              defaultSelectedKeys={'0'}
+              selectedKeys={select}
               style={{ minHeight: '100vh', borderRight: 0, userSelect: 'none' }}
             >
-              <MenuItem onClick={() => {
+              <MenuItem key='feature' onClick={() => {
                 navigate('/feature')
-              }} key="0" icon={<HomeOutlined />}>
+              }} icon={<HomeOutlined />}>
                 Feature
               </MenuItem>
-              <SubMenu key="sub1" icon={<MoneyCollectOutlined />} title="Finance">
-                <Menu.Item key="1"
+              <SubMenu key="finance" icon={<MoneyCollectOutlined />} title="Finance">
+                <Menu.Item key="add"
                   onClick={showModal}
                 >Create Group</Menu.Item>
                 {groups?.map((group) => {
-                  return <Menu.Item key={groups._id} 
-                    onClick={()=>{
+                  return <Menu.Item key={group._id}
+                    onClick={() => {
                       navigate(`/group/${group._id}`)
                     }}
                   >{group.name}</Menu.Item>
                 })}
               </SubMenu>
-              <SubMenu key="sub2" icon={<LaptopOutlined />} title="Device">
-                <Menu.Item key="5">Device 1</Menu.Item>
-                <Menu.Item key="6">Device 2</Menu.Item>
-                <Menu.Item key="7">Device 3</Menu.Item>
-                <Menu.Item key="8">Device 4</Menu.Item>
+              <SubMenu key="game" icon={<LinuxOutlined />} title="Game">
+                <Menu.Item key="alliance">Alliance</Menu.Item>
+                <Menu.Item key="user">User</Menu.Item>
+                <Menu.Item key="egg">Egg</Menu.Item>
+                <Menu.Item key="cvc">CVC</Menu.Item>
               </SubMenu>
-              <SubMenu key="sub3" icon={<NotificationOutlined />} title="Notification">
-                <Menu.Item key="9">Notification 1</Menu.Item>
-                <Menu.Item key="10">Notification 2</Menu.Item>
-                <Menu.Item key="11">Notification 3</Menu.Item>
-                <Menu.Item key="12">Notification 4</Menu.Item>
+              <SubMenu key="chat" icon={<WechatWorkOutlined />} title="Chat">
+                <Menu.Item key="addChat"
+                  onClick={showModal}
+                >Create Group</Menu.Item>
               </SubMenu>
               <MenuItem onClick={async () => {
                 try {
