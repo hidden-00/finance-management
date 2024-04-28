@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Button, Input, Modal, Pagination, Popconfirm, Select, Space, Spin, Table, Typography, message } from 'antd';
+import { Button, Input, Modal, Popconfirm, Select, Space, Spin, Table, Typography, message } from 'antd';
 import { FloatButton } from "antd";
 import { MenuFoldOutlined, UserOutlined, FileAddOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { useCallback } from 'react';
 import { useAuth } from '../../provider/auth';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 const { Column } = Table;
@@ -25,6 +25,7 @@ const Finance = () => {
     place: "",
   })
   const [openForm, setOpenForm] = useState(false);
+  const navigate = useNavigate();
 
   const showModal = () => {
     setOpenForm(true);
@@ -58,7 +59,10 @@ const Finance = () => {
       if (res.success) {
         setData(res.data.finances);
       } else {
-        messageApi.info(res.msg);
+        messageApi.info(res.msg || res.errors?.name);
+        setTimeout(()=>{
+          navigate('/group');
+        },2000);
       }
       setLoad(false);
     } catch (err) {
@@ -67,7 +71,7 @@ const Finance = () => {
         setLoad(false);
       }, 1000);
     }
-  }, [auth.urlAPI, auth.token, id, messageApi])
+  }, [auth.urlAPI, auth.token, id, messageApi, navigate])
 
   const sendRequestInsert = async () => {
     try {
@@ -192,8 +196,8 @@ const Finance = () => {
         render={(_, record) => (
           <Space size="middle">
             <Popconfirm
-              title="Delete the task"
-              description="Are you sure to delete this task?"
+              title="Delete the finance"
+              description="Are you sure to delete this finance?"
               onConfirm={()=>{
                 confirm(record._id);
               }}

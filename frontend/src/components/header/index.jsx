@@ -1,16 +1,17 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Input, Layout, Menu, Modal, Spin, Typography, message } from 'antd';
-import { NotificationOutlined, HomeOutlined, MoneyCollectOutlined, LinuxOutlined, WechatWorkOutlined, LogoutOutlined } from '@ant-design/icons';
+import { BookOutlined, HomeOutlined, MoneyCollectOutlined, LinuxOutlined, WechatWorkOutlined, LogoutOutlined } from '@ant-design/icons';
 import './AdminLayout.css'; // Import file CSS tùy chỉnh
 import { useState } from 'react';
 import MenuItem from 'antd/es/menu/MenuItem';
 import { useAuth } from '../../provider/auth';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
 
 const AdminLayout = ({ children }) => {
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(true);
   const auth = useAuth();
   const [load, setLoad] = useState(false);
@@ -22,8 +23,8 @@ const AdminLayout = ({ children }) => {
   const [select, setSelect] = useState('');
   const [open, setOpen] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const [groups, setGroups] = useState([]);
   const navigate = useNavigate();
+  const routes = useMemo(()=>['feature', 'group', 'game', 'chat', 'blog'],[])
 
   const showModal = () => {
     setOpen(true);
@@ -33,37 +34,12 @@ const AdminLayout = ({ children }) => {
     setOpen(false);
   };
 
-  const getGroupTitle = useCallback(async () => {
-    try {
-      setLoad(true);
-      const response = await fetch(`${auth.urlAPI}/api/v1/group/list_name`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": auth.token
-        }
-      });
-      const res = await response.json();
-      if (res.success) {
-        setGroups(res.data.groups);
-      } else {
-        messageApi.info(res.msg);
-      }
-      setLoad(false);
-    } catch (err) {
-      messageApi.error('SERVER ERROR');
-      console.error(err);
-      setTimeout(() => {
-        setLoad(false);
-      }, 1000);
-    }
-  }, [auth.urlAPI, auth.token, messageApi])
-
   useEffect(() => {
-    getGroupTitle();
-    const url = window.location.href;
-    setSelect(url.split('/').at(url.split('/').length - 1));
-  }, [getGroupTitle, window.location.href]);
+    const url = location.pathname;
+    routes.forEach((e) => {
+      if (url.includes(e)) setSelect(e);
+    });
+  }, [location.pathname, routes]);
 
   const handleInput = (e) => {
     const { name, value } = e.target
@@ -118,28 +94,26 @@ const AdminLayout = ({ children }) => {
             <Menu
               mode="inline"
               selectedKeys={select}
-              style={{ minHeight: '100vh', borderRight: 0, userSelect: 'none' }}
+              style={{ minHeight: '100%', borderRight: 0, userSelect: 'none' }}
             >
               <MenuItem key='feature' onClick={() => {
                 navigate('/feature')
               }} icon={<HomeOutlined />}>
                 Feature
               </MenuItem>
-              <SubMenu key="finance" icon={<MoneyCollectOutlined />} title="Finance">
+              <SubMenu key="group" icon={<MoneyCollectOutlined />} title="Finance">
                 <Menu.Item key="add"
                   onClick={showModal}
                 >Create Group</Menu.Item>
-                {groups?.map((group) => {
-                  return <Menu.Item key={group._id}
-                    onClick={() => {
-                      navigate(`/group/${group._id}`)
-                    }}
-                  >{group.name}</Menu.Item>
-                })}
+                <Menu.Item key="list_group"
+                  onClick={()=>{
+                    navigate('/group')
+                  }}
+                >List Group</Menu.Item>
               </SubMenu>
               <SubMenu key="game" icon={<LinuxOutlined />} title="Game">
                 <Menu.Item key="alliance">Alliance</Menu.Item>
-                <Menu.Item key="user">User</Menu.Item>
+                <Menu.Item key="account">Account</Menu.Item>
                 <Menu.Item key="egg">Egg</Menu.Item>
                 <Menu.Item key="cvc">CVC</Menu.Item>
               </SubMenu>
@@ -148,6 +122,15 @@ const AdminLayout = ({ children }) => {
                   onClick={showModal}
                 >Create Group</Menu.Item>
               </SubMenu>
+              <MenuItem
+                icon={<BookOutlined />}
+                key='blog'
+                onClick={()=>{
+                  navigate('/blog');
+                }}
+              >
+                Blog
+              </MenuItem>
               <MenuItem onClick={async () => {
                 try {
                   setLoad(true);

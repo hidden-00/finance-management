@@ -6,6 +6,7 @@ import PrivateRoute from './routes/PrivateRoute';
 import Register from './components/register';
 import Feature from './components/feature';
 import Finance from './components/finance';
+import ListGroup from './components/finance/listGroup';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route element={<PrivateRoute />}>
               <Route path="/feature" element={<Feature />} />
+              <Route path='/group' element={<ListGroup/>}/>
               <Route path='/group/:id' element={<Finance/>}/>
             </Route>
             <Route path='*' element={<Navigate to={'/feature'}/>}/>

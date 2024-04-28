@@ -24,8 +24,12 @@ groupController.getNameList = async (req, res, next) => {
         const id = req.user._id;
         const list_name = await userModel.findById(id, { groups: 1 }).populate({
             path: "groups",
-            select: "name",
-            match: { is_deleted: false }
+            select: ["name", "members", "description"],
+            match: { is_deleted: false },
+            populate: {
+                path: "members",
+                select: ['name', 'email']
+            }
         });
         if(!list_name) return sendResponse(res, httpStatus.OK, false, null, null, 'No Group', null);
         return sendResponse(res, httpStatus.OK, true, list_name, null, 'Get List Success', null);
