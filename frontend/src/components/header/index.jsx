@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Layout, Menu, Spin, message } from 'antd';
-import { NotificationOutlined,HomeOutlined, MoneyCollectOutlined, LaptopOutlined, LogoutOutlined } from '@ant-design/icons';
+import { NotificationOutlined, HomeOutlined, MoneyCollectOutlined, LaptopOutlined, LogoutOutlined } from '@ant-design/icons';
 import './AdminLayout.css'; // Import file CSS tùy chỉnh
 import { useState } from 'react';
 import MenuItem from 'antd/es/menu/MenuItem';
@@ -15,7 +15,39 @@ const AdminLayout = ({ children }) => {
   const auth = useAuth();
   const [load, setLoad] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [groups, setGroups] = useState([]);
   const navigate = useNavigate();
+
+  const getGroupTitle = useCallback(async () => {
+    try {
+      setLoad(true);
+      const response = await fetch(`${auth.urlAPI}/api/v1/group/list_name`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        }
+      });
+      const res = await response.json();
+      if (res.success) {
+        messageApi.success(res.msg);
+        setGroups(res.data.groups);
+      } else {
+        messageApi.info(res.msg);
+      }
+      setLoad(false);
+    } catch (err) {
+      messageApi.error('SERVER ERROR');
+      console.error(err);
+      setTimeout(() => {
+        setLoad(false);
+      }, 1000);
+    }
+  }, [auth.urlAPI, auth.token, messageApi])
+
+  useEffect(() => {
+    getGroupTitle();
+  }, [getGroupTitle]);
 
   return (
     <>
@@ -27,12 +59,12 @@ const AdminLayout = ({ children }) => {
             <div className="sider-button-container" onClick={() => {
               setCollapsed(!collapsed)
             }}>
-              <strong style={{ color: 'white', userSelect:'none' }}>Admin</strong>
+              <strong style={{ color: 'white', userSelect: 'none' }}>Admin</strong>
             </div>
             <Menu
               mode="inline"
               defaultSelectedKeys={'0'}
-              style={{ minHeight: '100vh', borderRight: 0, userSelect:'none' }}
+              style={{ minHeight: '100vh', borderRight: 0, userSelect: 'none' }}
             >
               <MenuItem onClick={() => {
                 navigate('/feature')
@@ -40,10 +72,14 @@ const AdminLayout = ({ children }) => {
                 Feature
               </MenuItem>
               <SubMenu key="sub1" icon={<MoneyCollectOutlined />} title="Finance">
-                <Menu.Item key="1">User 1</Menu.Item>
+                <Menu.Item key="1">Create Group</Menu.Item>
+                {groups?.map((group) => {
+                  return <Menu.Item key={groups._id}>{group.name}</Menu.Item>
+                })}
+                {/* <Menu.Item key="1">Create Group</Menu.Item>
                 <Menu.Item key="2">User 2</Menu.Item>
                 <Menu.Item key="3">User 3</Menu.Item>
-                <Menu.Item key="4">User 4</Menu.Item>
+                <Menu.Item key="4">User 4</Menu.Item> */}
               </SubMenu>
               <SubMenu key="sub2" icon={<LaptopOutlined />} title="Device">
                 <Menu.Item key="5">Device 1</Menu.Item>
@@ -77,9 +113,9 @@ const AdminLayout = ({ children }) => {
                   }
                 } catch (err) {
                   messageApi.error('SERVER ERROR')
-                    setTimeout(() => {
-                      setLoad(false);
-                    }, 1000);
+                  setTimeout(() => {
+                    setLoad(false);
+                  }, 1000);
                 }
               }} key="13" icon={<LogoutOutlined />}>
                 Logout

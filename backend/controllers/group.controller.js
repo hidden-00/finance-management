@@ -27,6 +27,7 @@ groupController.getNameList = async (req, res, next) => {
             select: "name",
             match: { is_deleted: false }
         });
+        if(!list_name) return sendResponse(res, httpStatus.OK, false, null, null, 'No Group', null);
         return sendResponse(res, httpStatus.OK, true, list_name, null, 'Get List Success', null);
     } catch (err) {
         next(err);

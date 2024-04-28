@@ -44,7 +44,7 @@ const Login = () => {
         } catch (err) {
             setLoadButton(false);
             setLoad(false);
-            messageApi.warning("ERROR SERVER");
+            messageApi.error("ERROR SERVER");
         }
     }
 

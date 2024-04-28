@@ -1,12 +1,14 @@
+import { message } from 'antd';
 import { useCallback } from 'react';
 import { useContext, createContext, useState, useEffect } from 'react'
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+    const [messageApi, contextHolder] = message.useMessage();
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('site') || "");
-    const urlAPI = `https://finance-management-zviq.onrender.com`;
-    // const urlAPI = `http://localhost:5050`;
+    // const urlAPI = `https://finance-management-zviq.onrender.com`;
+    const urlAPI = `http://localhost:5050`;
 
     const fetchData = useCallback(async () => {
         try {
@@ -22,14 +24,17 @@ const AuthProvider = ({ children }) => {
             if (res.success) {
                 setUser(res.data);
             } else {
-                setToken('');
-                localStorage.removeItem('site')
-                throw new Error(res.message);
+                messageApi.warning(res.msg);
+                setTimeout(() => {
+                    setToken('');
+                    localStorage.removeItem('site')
+                    setUser(null);
+                }, 500)
             }
         } catch (err) {
-            console.error(err);
+            messageApi.error('SERVER ERROR');
         }
-    }, [urlAPI, token])
+    }, [urlAPI, token, messageApi])
 
     useEffect(() => {
         fetchData();
@@ -70,7 +75,7 @@ const AuthProvider = ({ children }) => {
         const res = await response.json()
         return res;
     }
-    return <AuthContext.Provider value={{ setUser, setToken, token, user, loginAction, logOut, signinAction, urlAPI }}>{children}</AuthContext.Provider>
+    return <AuthContext.Provider value={{ setUser, setToken, token, user, loginAction, logOut, signinAction, urlAPI }}>{contextHolder}{children}</AuthContext.Provider>
 }
 
 export default AuthProvider;
