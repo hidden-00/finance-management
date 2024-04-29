@@ -1,14 +1,14 @@
-import { message } from 'antd';
 import { useCallback } from 'react';
 import { useContext, createContext, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-    const [messageApi, contextHolder] = message.useMessage();
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('site') || "");
-    // const urlAPI = `https://finance-management-zviq.onrender.com`;
-    const urlAPI = `http://localhost:5050`;
+    const urlAPI = `https://finance-management-zviq.onrender.com`;
+    // const urlAPI = `http://localhost:5050`;
+    const navigate = useNavigate();
 
     const fetchData = useCallback(async () => {
         try {
@@ -29,9 +29,9 @@ const AuthProvider = ({ children }) => {
                 setUser(null);
             }
         } catch (err) {
-            messageApi.error('SERVER ERROR');
+            navigate('/server-error')
         }
-    }, [urlAPI, token, messageApi])
+    }, [urlAPI, token, navigate])
 
     useEffect(() => {
         fetchData();
@@ -72,7 +72,7 @@ const AuthProvider = ({ children }) => {
         const res = await response.json()
         return res;
     }
-    return <AuthContext.Provider value={{ setUser, setToken, token, user, loginAction, logOut, signinAction, urlAPI }}>{contextHolder}{children}</AuthContext.Provider>
+    return <AuthContext.Provider value={{ setUser, setToken, token, user, loginAction, logOut, signinAction, urlAPI }}>{children}</AuthContext.Provider>
 }
 
 export default AuthProvider;

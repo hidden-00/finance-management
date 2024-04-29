@@ -40,9 +40,7 @@ const Register = () => {
                 }
             }, 500);
         } catch (err) {
-            setLoadButton(false)
-            setLoad(false);
-            messageApi.error('SERVER ERROR')
+            navigate('/server-error')
         }
     }
 

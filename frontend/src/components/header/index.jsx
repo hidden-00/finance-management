@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { Input, Layout, Menu, Modal, Spin, Typography, message } from 'antd';
-import { BookOutlined, HomeOutlined, MoneyCollectOutlined, LinuxOutlined, WechatWorkOutlined, LogoutOutlined } from '@ant-design/icons';
+import { BookOutlined, HomeOutlined, MoneyCollectOutlined, GlobalOutlined, LinuxOutlined, WechatWorkOutlined, LogoutOutlined } from '@ant-design/icons';
 import './AdminLayout.css'; // Import file CSS tùy chỉnh
 import { useState } from 'react';
 import MenuItem from 'antd/es/menu/MenuItem';
@@ -24,7 +24,7 @@ const AdminLayout = ({ children }) => {
   const [open, setOpen] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
-  const routes = useMemo(()=>['feature', 'group', 'game', 'chat', 'blog'],[])
+  const routes = useMemo(()=>['feature', 'group', 'game', 'chat', 'blog', 'toeic'],[])
 
   const showModal = () => {
     setOpen(true);
@@ -131,6 +131,15 @@ const AdminLayout = ({ children }) => {
               >
                 Blog
               </MenuItem>
+              <MenuItem
+                icon={<GlobalOutlined />}
+                key='toeic'
+                onClick={()=>{
+                  navigate('/toeic');
+                }}
+              >
+                Toeic
+              </MenuItem>
               <MenuItem onClick={async () => {
                 try {
                   setLoad(true);
@@ -150,10 +159,9 @@ const AdminLayout = ({ children }) => {
                     }, 1000);
                   }
                 } catch (err) {
-                  messageApi.error('SERVER ERROR')
-                  setTimeout(() => {
-                    setLoad(false);
-                  }, 1000);
+                  setTimeout(()=>{
+                    navigate('/server-error')
+                  },500);
                 }
               }} key="13" icon={<LogoutOutlined />}>
                 Logout

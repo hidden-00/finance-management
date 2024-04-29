@@ -50,7 +50,7 @@ validations.validatePost = (req, res, next) => {
                 {
                     condition: 'IsLength',
                     msg: 'Name should be between 2 to 100',
-                    option: { min: 2, max: 30 },
+                    option: { min: 2, max: 100 },
                 },
             ],
         },
@@ -64,7 +64,7 @@ validations.validatePost = (req, res, next) => {
                 {
                     condition: 'IsLength',
                     msg: 'Name Product should be between 2 to 100',
-                    option: { min: 2, max: 30 },
+                    option: { min: 2, max: 100 },
                 },
             ],
         },
@@ -77,7 +77,7 @@ validations.validatePost = (req, res, next) => {
                 },
                 {
                     condition: 'IsInt',
-                    msg: 'Price is Number',
+                    msg: 'Price is Number 0-10000000',
                     option: { min: 0, max: 100000000 }
                 }
             ]
@@ -92,7 +92,7 @@ validations.validatePost = (req, res, next) => {
                 {
                     condition: 'IsLength',
                     msg: 'Place should be between 2 to 100',
-                    option: { min: 2, max: 30 },
+                    option: { min: 2, max: 100 },
                 },
             ],
         },

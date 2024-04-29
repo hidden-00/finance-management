@@ -42,9 +42,7 @@ const Login = () => {
                 }
             }, 500);
         } catch (err) {
-            setLoadButton(false);
-            setLoad(false);
-            messageApi.error("ERROR SERVER");
+            navigate('/server-error')
         }
     }
 

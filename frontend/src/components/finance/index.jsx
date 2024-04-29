@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Input, Modal, Popconfirm, Select, Space, Spin, Table, Typography, message } from 'antd';
+import { Button, Input, List, Modal, Popconfirm, Select, Space, Spin, Table, Typography, message } from 'antd';
 import { FloatButton } from "antd";
 import { MenuFoldOutlined, UserOutlined, FileAddOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { useCallback } from 'react';
@@ -35,6 +35,7 @@ const Finance = () => {
     setOpenForm(false);
   };
 
+
   const handleInput = (e) => {
     const { name, value } = e.target
     setInput((prev) => ({
@@ -57,12 +58,12 @@ const Finance = () => {
       });
       const res = await response.json();
       if (res.success) {
-        setData(res.data.finances);
+        setData(res.data);
       } else {
         messageApi.info(res.msg || res.errors?.name);
-        setTimeout(()=>{
+        setTimeout(() => {
           navigate('/group');
-        },2000);
+        }, 2000);
       }
       setLoad(false);
     } catch (err) {
@@ -143,9 +144,9 @@ const Finance = () => {
       const res = await response.json();
       if (res.success) {
         messageApi.success(res.msg);
-        setTimeout(()=>{
+        setTimeout(() => {
           window.location.reload()
-        },500);
+        }, 500);
       } else {
         messageApi.info(res.msg);
         setLoad(false);
@@ -159,6 +160,38 @@ const Finance = () => {
   };
   const cancel = (e) => {
   };
+
+  const showModalUser = () => {
+    Modal.info({
+      title: `List members group ${data?.name}`,
+      content: (
+        <div>
+          <List
+            style={{ margin: 5 }}
+            bordered
+            dataSource={data?.members}
+            renderItem={(item) => (
+              <List.Item style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <Typography.Text>({item.name})</Typography.Text> {item.email}
+                </div>
+                <Button onClick={(e) => {
+                  e.stopPropagation();
+                }} type="link">
+                  Remove
+                </Button>
+              </List.Item>
+            )}
+          />
+          <div style={{ display: 'flex' }}>
+            <Input style={{ margin: 5 }} name='email' placeholder='Invite Email' />
+            <Button style={{ margin: 5 }}>Invite</Button>
+          </div>
+        </div>
+      ),
+      onOk() { },
+    })
+  }
 
   return <>
     {contextHolder}
@@ -178,10 +211,12 @@ const Finance = () => {
       <FloatButton icon={<FileAddOutlined />}
         onClick={showModal}
       />
-      <FloatButton icon={<UserOutlined />} />
+      <FloatButton icon={<UserOutlined />}
+        onClick={showModalUser}
+      />
       <FloatButton icon={<InfoCircleOutlined />} />
     </FloatButton.Group>
-    <Table dataSource={data}>
+    <Table dataSource={data?.finances}>
       <Column title="Name" dataIndex="name" key="name" />
       <Column title="Name Product" dataIndex="mon_hang" key="mon_hang" />
       <Column title="Type" dataIndex="type" key="type" />
@@ -198,7 +233,7 @@ const Finance = () => {
             <Popconfirm
               title="Delete the finance"
               description="Are you sure to delete this finance?"
-              onConfirm={()=>{
+              onConfirm={() => {
                 confirm(record._id);
               }}
               onCancel={cancel}
@@ -214,6 +249,7 @@ const Finance = () => {
     <Modal
       title="New Finance"
       open={openForm}
+      style={{ top: 10 }}
       onCancel={handleCancel}
       onOk={handleOk}
       confirmLoading={confirmLoading}
