@@ -5,6 +5,7 @@ const router = express.Router()
 const validateGroup = require('../validation/group');
 
 router.post('/', auth.authentication, validateGroup.sanitizePost, validateGroup.validatePost, groupController.createOne);
+router.get('/invite', groupController.inviteConfirm);
 router.get('/list_name', auth.authentication, groupController.getNameList);
 router.get('/:id', auth.authentication, groupController.getFinance);
 router.post('/add', auth.authentication, validateGroup.sanitizeEmail, validateGroup.validateEmail,groupController.addMember);

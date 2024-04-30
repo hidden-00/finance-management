@@ -2,6 +2,9 @@ const httpStatus = require("http-status");
 const sendResponse = require("../helpers/sendResponse");
 const groupModel = require("../models/group.model");
 const userModel = require("../models/user.model");
+const inviteModel = require('../models/invite.model');
+const mongoose = require('mongoose')
+const otherHelper = require('../helpers/other');
 
 const groupController = {}
 
@@ -31,20 +34,20 @@ groupController.getNameList = async (req, res, next) => {
                 select: ['name', 'email']
             }
         });
-        if(!list_name) return sendResponse(res, httpStatus.OK, false, null, null, 'No Group', null);
+        if (!list_name) return sendResponse(res, httpStatus.OK, false, null, null, 'No Group', null);
         return sendResponse(res, httpStatus.OK, true, list_name, null, 'Get List Success', null);
     } catch (err) {
         next(err);
     }
 }
 
-groupController.edit = async(req, res, next)=>{
+groupController.edit = async (req, res, next) => {
     try {
         const { name, description, _id } = req.body;
         const id = req.user._id;
         const group = await groupModel.findById(_id);
-        if(!group) return sendResponse(res, httpStatus.OK, false, null, null, 'Not found Group', null);
-        if(group.leader.toString()!==id) return sendResponse(res, httpStatus.OK, false, null, null, 'You not Leader', null);
+        if (!group) return sendResponse(res, httpStatus.OK, false, null, null, 'Not found Group', null);
+        if (group.leader.toString() !== id) return sendResponse(res, httpStatus.OK, false, null, null, 'You not Leader', null);
         group.name = name;
         group.description = description;
         await group.save();
@@ -86,19 +89,19 @@ groupController.deleteGroup = async (req, res, next) => {
     }
 }
 
-groupController.removeMember = async(req, res, next)=>{
-    try{
-        const {user_id, group_id} = req.body;
+groupController.removeMember = async (req, res, next) => {
+    try {
+        const { user_id, group_id } = req.body;
         const my_id = req.user._id;
-        if(user_id===my_id) return sendResponse(res, httpStatus.INTERNAL_SERVER_ERROR, false, null, null, 'Cannot remove me', null);
-        const group = await groupModel.findOne({_id: group_id, leader: my_id});
-        if(!group){
+        if (user_id === my_id) return sendResponse(res, httpStatus.INTERNAL_SERVER_ERROR, false, null, null, 'Cannot remove me', null);
+        const group = await groupModel.findOne({ _id: group_id, leader: my_id });
+        if (!group) {
             return sendResponse(res, httpStatus.UNAUTHORIZED, false, null, null, 'Cannot found Group or You are not leader', null);
         }
-        group.members = group.members.filter((e)=> e.toString()!==user_id);
+        group.members = group.members.filter((e) => e.toString() !== user_id);
         await group.save();
         return sendResponse(res, httpStatus.OK, true, group, null, 'Remove success', null);
-    }catch(err){
+    } catch (err) {
         next(err);
     }
 }
@@ -106,28 +109,56 @@ groupController.removeMember = async(req, res, next)=>{
 groupController.addMember = async (req, res, next) => {
     try {
         const { email, group_id } = req.body;
+        const checkExist = await inviteModel.findOne({email_invited: email, group: group_id});
+        if(checkExist && checkExist.status==='waiting') return sendResponse(res, httpStatus.OK, false, null, null, 'Invite Exist', null);
+        const group = await groupModel.findById(group_id);
+        if (!group) return sendResponse(res, httpStatus.OK, false, null, null, 'Not found group', null);
         const user = await userModel.findOne({ email: email });
-        if (!user) {
-            return sendResponse(res, httpStatus.OK, false, null, null, 'Not found user from email!', null)
-        } else {
-            const group = await groupModel.findById(group_id);
-            if(group){
-                if(group.members.includes(user._id)){
-                    return sendResponse(res, httpStatus.OK, false, null, null, 'Thanh Vien Da Ton Tai', null);
-                }else{
-                    group.members.push(user._id);
-                    await group.save();
-                    user.groups.push(group._id);
-                    await user.save();
-                    return sendResponse(res, httpStatus.OK, true, group, null, 'Add members success', null);
-                }
-            }else{
-                return sendResponse(res, httpStatus.OK, false, null, null, 'Not found group', null);
-            }
+        const invite = new inviteModel();
+        invite.email_invited = email;
+        invite.inviter = req.user._id;
+        invite.code_invite = otherHelper.generateRandomHexString(10);
+        invite.status = "waiting";
+        invite.group = group_id;
+        if (user){
+            if(group.members.includes(user._id)) return sendResponse(res, httpStatus.OK, false, null, null, 'Members Exist', null);
+            invite.user_invited = user._id;
         }
+            
+        await invite.save();
+        return sendResponse(res, httpStatus.OK, true, invite, null, 'Send Invite Success!', null)
     } catch (err) {
         next(err);
     }
+}
+
+groupController.inviteConfirm = async (req, res, next) => {
+    const { code, status } = req.query;
+    if (!code || !status || (status !== 'accept' && status !== 'reject')) return sendResponse(res, httpStatus.OK, false, null, null, 'ERROR LINK CONFIRM INVITE', null);
+    const invite = await inviteModel.findOne({ code_invite: code });
+    if (!invite) return sendResponse(res, httpStatus.OK, false, null, null, 'Cannot found Invite', null);
+    if (invite.status !== 'waiting') return sendResponse(res, httpStatus.OK, false, null, null, 'The invitation has expired', null);
+    if (invite.expires_in < Date.now()) {
+        invite.status = "expires";
+        await invite.save();
+        return sendResponse(res, httpStatus.OK, false, null, null, 'The invitation has expired', null);
+    }
+    const id_user = invite.user_invited;
+    if (status === 'reject') {
+        invite.status = "reject";
+        await invite.save();
+    } else {
+        if (id_user) {
+            console.log(`test: ${invite.group} ${id_user}`)
+            await groupModel.findByIdAndUpdate(invite.group, { $push: { members: id_user } }, { new: true })
+            invite.status = "done";
+            await invite.save();
+        } else {
+            invite.status = 'accept';
+            await invite.save();
+        }
+    }
+    return sendResponse(res, httpStatus.OK, true, invite, null, 'Update Invite Success!!', null);
 }
 
 module.exports = groupController;

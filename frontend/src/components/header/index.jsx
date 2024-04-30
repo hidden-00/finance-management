@@ -24,7 +24,7 @@ const AdminLayout = ({ children }) => {
   const [open, setOpen] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
-  const routes = useMemo(()=>['feature', 'group', 'game', 'chat', 'blog', 'toeic'],[])
+  const routes = useMemo(() => ['feature', 'group', 'game', 'chat', 'blog', 'toeic'], [])
 
   const showModal = () => {
     setOpen(true);
@@ -75,7 +75,7 @@ const AdminLayout = ({ children }) => {
       }, 500);
     } catch (err) {
       setConfirmLoading(false);
-      messageApi.error("ERROR SERVER");
+      navigate('/server-error')
     }
   };
 
@@ -106,7 +106,7 @@ const AdminLayout = ({ children }) => {
                   onClick={showModal}
                 >Create Group</Menu.Item>
                 <Menu.Item key="list_group"
-                  onClick={()=>{
+                  onClick={() => {
                     navigate('/group')
                   }}
                 >List Group</Menu.Item>
@@ -125,7 +125,7 @@ const AdminLayout = ({ children }) => {
               <MenuItem
                 icon={<BookOutlined />}
                 key='blog'
-                onClick={()=>{
+                onClick={() => {
                   navigate('/blog');
                 }}
               >
@@ -134,7 +134,7 @@ const AdminLayout = ({ children }) => {
               <MenuItem
                 icon={<GlobalOutlined />}
                 key='toeic'
-                onClick={()=>{
+                onClick={() => {
                   navigate('/toeic');
                 }}
               >
@@ -159,9 +159,9 @@ const AdminLayout = ({ children }) => {
                     }, 1000);
                   }
                 } catch (err) {
-                  setTimeout(()=>{
+                  setTimeout(() => {
                     navigate('/server-error')
-                  },500);
+                  }, 500);
                 }
               }} key="13" icon={<LogoutOutlined />}>
                 Logout

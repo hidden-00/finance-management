@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const loginlogController = require('./loginlog.controller');
 const loginlogModel = require('../models/loginlog.model');
 const userModel = require('../models/user.model');
+const inviteModel = require('../models/invite.model');
+const groupModel = require('../models/group.model');
 const UserController = {}
 
 UserController.createOne = async (req, res, next) => {
@@ -18,9 +20,19 @@ UserController.createOne = async (req, res, next) => {
             return sendResponse(res, httpStatus.CONFLICT, false, data, errors, errors.email, null);
         } else {
             let hashPass = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-            const user = new User({ email, password: hashPass, name });
-            const save = await User.create(user);
-            return sendResponse(res, httpStatus.OK, true, save, null, 'Đăng kí thành công', null)
+            const invite = await inviteModel.findOne({ email_invited: email, status: 'accept' });
+            if (!invite) {
+                const user = new User({ email, password: hashPass, name });
+                const save = await User.create(user);
+                return sendResponse(res, httpStatus.OK, true, save, null, 'Resgister success!!', null)
+            } else {
+                const save = await User.create(user);
+                await groupModel.findByIdAndUpdate(invite.group, { $push: { members: save._id } }, { new: true });
+                const user = new User({ _id: invite.user_invited, email, password: hashPass, name });
+                invite.status= 'done';
+                await invite.save();
+                return sendResponse(res, httpStatus.OK, true, save, null, 'Resgister success!!', null)
+            }
         }
     } catch (err) {
         next(err);
