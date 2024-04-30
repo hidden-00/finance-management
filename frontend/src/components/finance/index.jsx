@@ -16,6 +16,8 @@ const Finance = () => {
   const [open, setOpen] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [showMembers, setShowMembers] = useState(false);
+  const [loadButton, setLoadButton] = useState(false);
   const [input, setInput] = useState({
     name: "",
     mon_hang: "",
@@ -23,6 +25,7 @@ const Finance = () => {
     money: "",
     method: "",
     place: "",
+    email: ""
   })
   const [openForm, setOpenForm] = useState(false);
   const navigate = useNavigate();
@@ -34,6 +37,14 @@ const Finance = () => {
   const handleCancel = () => {
     setOpenForm(false);
   };
+
+  const handleOkMembers = ()=>{
+    setShowMembers(false);
+  }
+
+  const handleCancelMembers = ()=>{
+    setShowMembers(false);
+  }
 
 
   const handleInput = (e) => {
@@ -162,35 +173,35 @@ const Finance = () => {
   };
 
   const showModalUser = () => {
-    Modal.info({
-      title: `List members group ${data?.name}`,
-      content: (
-        <div>
-          <List
-            style={{ margin: 5 }}
-            bordered
-            dataSource={data?.members}
-            renderItem={(item) => (
-              <List.Item style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <Typography.Text>({item.name})</Typography.Text> {item.email}
-                </div>
-                <Button onClick={(e) => {
-                  e.stopPropagation();
-                }} type="link">
-                  Remove
-                </Button>
-              </List.Item>
-            )}
-          />
-          <div style={{ display: 'flex' }}>
-            <Input style={{ margin: 5 }} name='email' placeholder='Invite Email' />
-            <Button style={{ margin: 5 }}>Invite</Button>
-          </div>
-        </div>
-      ),
-      onOk() { },
-    })
+    setShowMembers(true);
+  }
+
+  const handleAdd = async (id) => {
+    try {
+      setLoadButton(true);
+      const response = await fetch(`${auth.urlAPI}/api/v1/group/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        },
+        body: JSON.stringify({ email: input.email, group_id: id })
+      })
+      const res = await response.json();
+      setTimeout(() => {
+        if (!res.success) {
+          messageApi.info(res.msg)
+          setLoadButton(false);
+        } else {
+          messageApi.success(res.msg)
+          setTimeout(() => {
+            setLoadButton(false);
+          }, 1000);
+        }
+      }, 500);
+    } catch (err) {
+      navigate('/server-error');
+    }
   }
 
   return <>
@@ -308,6 +319,42 @@ const Finance = () => {
       />
       <Typography.Title level={5}>Place</Typography.Title>
       <Input name='place' autoFocus placeholder='Place' onChange={handleInput} />
+    </Modal>
+    <Modal
+      title={`List members group ${data?.name}`}
+      open={showMembers}
+      cancelButtonProps={{ style: { display: 'none' } }}
+      onOk={handleOkMembers}
+      onCancel={handleCancelMembers}
+    >
+      <div>
+        <List
+          style={{ margin: 5 }}
+          bordered
+          dataSource={data?.members}
+          renderItem={(item) => (
+            <List.Item style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <Typography.Text>({item.name})</Typography.Text> {item.email}
+              </div>
+              <Button onClick={(e) => {
+                e.stopPropagation();
+              }} type="link">
+                Remove
+              </Button>
+            </List.Item>
+          )}
+        />
+        <div style={{ display: 'flex' }}>
+          <Input style={{ margin: 5 }} autoFocus onChange={handleInput} name='email' placeholder='Invite Email' />
+          <Button loading={loadButton} autoFocus style={{ margin: 5 }} onClick={
+            (e) => {
+              e.preventDefault();
+              handleAdd(data._id);
+            }
+          }>Invite</Button>
+        </div>
+      </div>
     </Modal>
   </>
 };
