@@ -111,12 +111,12 @@ const AdminLayout = ({ children }) => {
                   }}
                 >List Group</Menu.Item>
               </SubMenu>
-              <SubMenu key="game" icon={<LinuxOutlined />} title="Game">
+              {/* <SubMenu key="game" icon={<LinuxOutlined />} title="Game">
                 <Menu.Item key="alliance">Alliance</Menu.Item>
                 <Menu.Item key="account">Account</Menu.Item>
                 <Menu.Item key="egg">Egg</Menu.Item>
                 <Menu.Item key="cvc">CVC</Menu.Item>
-              </SubMenu>
+              </SubMenu> */}
               <SubMenu key="chat" icon={<WechatWorkOutlined />} title="Chat">
                 <Menu.Item key="addChat"
                   onClick={showModal}

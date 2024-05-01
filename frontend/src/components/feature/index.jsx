@@ -30,8 +30,8 @@ const Feature = () => {
       <ul>
         <li>Manage personal finance</li>
         <li>Group financial management</li>
-        <li>Supports calling 3rd party APIs</li>
-        <li>3rd party auto API tool</li>
+        <li>Support chat Realtime</li>
+        <li>Write Blog</li>
       </ul>
       <p>The source code is designed to serve both individuals and groups. You can create your own group and invite other members to your financial group, sharing personal financial income and expenses together in groups.</p>
     </div>
