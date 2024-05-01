@@ -8,6 +8,7 @@ router.post('/', auth.authentication, validateGroup.sanitizePost, validateGroup.
 router.get('/invite', groupController.inviteConfirm);
 router.get('/list_name', auth.authentication, groupController.getNameList);
 router.get('/:id', auth.authentication, groupController.getFinance);
+router.post('/leave', auth.authentication, groupController.leave);
 router.post('/add', auth.authentication, validateGroup.sanitizeEmail, validateGroup.validateEmail,groupController.addMember);
 router.post('/delete/:id', auth.authentication, groupController.deleteGroup);
 router.post('/update', auth.authentication,validateGroup.sanitizePost, validateGroup.validatePost, groupController.edit);

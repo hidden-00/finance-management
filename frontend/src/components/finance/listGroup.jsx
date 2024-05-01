@@ -15,6 +15,7 @@ const ListGroup = () => {
     const [loadButton, setLoadButton] = useState(false);
     const [showMembers, setShowMembers] = useState(false);
     const [data, setData] = useState([]);
+    const [loadModalMembers, setLoadModalMembers] = useState({})
 
     const getListGroup = useCallback(async () => {
         try {
@@ -79,7 +80,7 @@ const ListGroup = () => {
         }
     }
 
-    const handleOk = ()=>{
+    const handleOk = () => {
         setShowMembers(false);
     }
 
@@ -91,7 +92,35 @@ const ListGroup = () => {
 
     const handleCancel = () => {
         setShowMembers(false);
-      };
+    };
+
+    const handleRemoveMember = async (group_id, user_id) => {
+        try {
+            setLoadModalMembers({ ...loadModalMembers, [user_id]: true });
+            const response = await fetch(`${auth.urlAPI}/api/v1/group/remove_member`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": auth.token
+                },
+                body: JSON.stringify({ group_id, user_id })
+            });
+            const res = await response.json();
+            if (res.success) {
+                messageApi.success(res.msg);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            } else {
+                messageApi.info(res.msg);
+                setTimeout(() => {
+                    setLoadModalMembers({ ...loadModalMembers, [user_id]: false });
+                }, 500);
+            }
+        } catch (err) {
+            navigate('/server-error')
+        }
+    }
 
     return (
         <>
@@ -123,7 +152,7 @@ const ListGroup = () => {
                 cancelButtonProps={{ style: { display: 'none' } }}
                 onOk={handleOk}
                 onCancel={handleCancel}
-                >
+            >
                 <div>
                     <List
                         style={{ margin: 5 }}
@@ -134,8 +163,9 @@ const ListGroup = () => {
                                 <div>
                                     <Typography.Text>({item.name})</Typography.Text> {item.email}
                                 </div>
-                                <Button onClick={(e) => {
+                                <Button loading={loadModalMembers[item._id]} onClick={(e) => {
                                     e.stopPropagation();
+                                    handleRemoveMember(data._id, item._id);
                                 }} type="link">
                                     Remove
                                 </Button>
@@ -145,7 +175,7 @@ const ListGroup = () => {
                     <div style={{ display: 'flex' }}>
                         <Input style={{ margin: 5 }} autoFocus onChange={handleInput} name='email' placeholder='Invite Email' />
                         <Button loading={loadButton} autoFocus style={{ margin: 5 }} onClick={
-                            (e)=>{
+                            (e) => {
                                 e.preventDefault();
                                 handleAdd(data._id);
                             }

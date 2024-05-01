@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input, List, Modal, Popconfirm, Select, Space, Spin, Table, Typography, message } from 'antd';
 import { FloatButton } from "antd";
-import { MenuFoldOutlined, UserOutlined, FileAddOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { MenuFoldOutlined, UserOutlined, FileAddOutlined, LogoutOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useCallback } from 'react';
 import { useAuth } from '../../provider/auth';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -18,6 +18,7 @@ const Finance = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
   const [loadButton, setLoadButton] = useState(false);
+  const [loadModalMembers, setLoadModalMembers] = useState({});
   const [input, setInput] = useState({
     name: "",
     mon_hang: "",
@@ -38,11 +39,11 @@ const Finance = () => {
     setOpenForm(false);
   };
 
-  const handleOkMembers = ()=>{
+  const handleOkMembers = () => {
     setShowMembers(false);
   }
 
-  const handleCancelMembers = ()=>{
+  const handleCancelMembers = () => {
     setShowMembers(false);
   }
 
@@ -85,6 +86,34 @@ const Finance = () => {
     }
   }, [auth.urlAPI, auth.token, id, messageApi, navigate])
 
+  const handleRemoveMember = async (group_id, user_id) => {
+    try {
+      setLoadModalMembers({ ...loadModalMembers, [user_id]: true });
+      const response = await fetch(`${auth.urlAPI}/api/v1/group/remove_member`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        },
+        body: JSON.stringify({ group_id, user_id })
+      });
+      const res = await response.json();
+      if (res.success) {
+        messageApi.success(res.msg);
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      } else {
+        messageApi.info(res.msg);
+        setTimeout(() => {
+          setLoadModalMembers({ ...loadModalMembers, [user_id]: false });
+        }, 500);
+      }
+    } catch (err) {
+      navigate('/server-error')
+    }
+  }
+
   const sendRequestInsert = async () => {
     try {
       setConfirmLoading(true);
@@ -109,10 +138,7 @@ const Finance = () => {
         setConfirmLoading(false);
       }, 1000);
     } catch (err) {
-      messageApi.error('SERVER ERROR');
-      setTimeout(() => {
-        setConfirmLoading(false);
-      }, 1000);
+      navigate('/server-error')
     }
   }
 
@@ -204,6 +230,61 @@ const Finance = () => {
     }
   }
 
+  const handleDeleteGroup = async () => {
+    try {
+      setLoad(true);
+      const response = await fetch(`${auth.urlAPI}/api/v1/group/delete/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        },
+        body: JSON.stringify({ group_id: id })
+      })
+      const res = await response.json();
+      setTimeout(() => {
+        if (!res.success) {
+          messageApi.info(res.msg)
+          setLoad(false);
+        } else {
+          messageApi.success(res.msg)
+          setTimeout(() => {
+            navigate('/group');
+          }, 1000);
+        }
+      }, 500);
+    } catch (err) {
+      navigate('/server-error');
+    }
+  }
+
+  const handleLeaveGroup = async () => {
+    try {
+      setLoad(true);
+      const response = await fetch(`${auth.urlAPI}/api/v1/group/leave`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        },
+        body: JSON.stringify({ email: input.email, group_id: id })
+      })
+      const res = await response.json();
+      setTimeout(() => {
+        if (!res.success) {
+          messageApi.info(res.msg)
+          setLoad(false);
+        } else {
+          messageApi.success(res.msg)
+          setTimeout(() => {
+            navigate('/group');
+          }, 1000);
+        }
+      }, 500);
+    } catch (err) {
+      navigate('/server-error');
+    }
+  }
   return <>
     {contextHolder}
     <Helmet><title>Finances</title></Helmet>
@@ -225,7 +306,8 @@ const Finance = () => {
       <FloatButton icon={<UserOutlined />}
         onClick={showModalUser}
       />
-      <FloatButton icon={<InfoCircleOutlined />} />
+      <FloatButton onClick={handleLeaveGroup} icon={<LogoutOutlined />} />
+      <FloatButton onClick={handleDeleteGroup} icon={<DeleteOutlined />} />
     </FloatButton.Group>
     <Table dataSource={data?.finances}>
       <Column title="Name" dataIndex="name" key="name" />
@@ -337,8 +419,9 @@ const Finance = () => {
               <div>
                 <Typography.Text>({item.name})</Typography.Text> {item.email}
               </div>
-              <Button onClick={(e) => {
+              <Button loading={loadModalMembers[item._id]} onClick={async (e) => {
                 e.stopPropagation();
+                await handleRemoveMember(data._id, item._id);
               }} type="link">
                 Remove
               </Button>

@@ -8,6 +8,7 @@ import Feature from './components/feature';
 import Finance from './components/finance';
 import ListGroup from './components/finance/listGroup';
 import Error500 from './components/error/Error500';
+import Invite from './components/invite';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path='/server-error' element={<Error500 />} />
+            <Route path='/invite' element={<Invite/>}/>
             <Route element={<PrivateRoute />}>
               <Route path="/feature" element={<Feature />} />
               <Route path='/group' element={<ListGroup />} />

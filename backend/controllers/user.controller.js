@@ -26,9 +26,10 @@ UserController.createOne = async (req, res, next) => {
                 const save = await User.create(user);
                 return sendResponse(res, httpStatus.OK, true, save, null, 'Resgister success!!', null)
             } else {
-                const save = await User.create(user);
                 await groupModel.findByIdAndUpdate(invite.group, { $push: { members: save._id } }, { new: true });
                 const user = new User({ _id: invite.user_invited, email, password: hashPass, name });
+                user.groups.push(invite.group)
+                const save = await User.create(user);
                 invite.status= 'done';
                 await invite.save();
                 return sendResponse(res, httpStatus.OK, true, save, null, 'Resgister success!!', null)

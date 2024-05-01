@@ -120,7 +120,7 @@ const AdminLayout = ({ children }) => {
               <SubMenu key="chat" icon={<WechatWorkOutlined />} title="Chat">
                 <Menu.Item key="addChat"
                   onClick={showModal}
-                >Create Group</Menu.Item>
+                >Create Chat</Menu.Item>
               </SubMenu>
               <MenuItem
                 icon={<BookOutlined />}
