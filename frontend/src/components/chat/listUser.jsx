@@ -46,7 +46,7 @@ const ListChat = () => {
             <Helmet><title>Finances</title></Helmet>
             <Spin spinning={load} fullscreen />
             <Row gutter={16}>
-                {users?.map((user) => user._id !== auth.user._id ? (
+                {users?.map((user) => user?._id !== auth.user?._id ? (
                     <Col span={8}>
                         <Card id={user._id} title={user.name} style={{ margin: '10px' }}
                             bordered={false}

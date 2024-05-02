@@ -1,11 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Input, Button, List, Avatar } from 'antd';
 import './ChatApp.css'; // Import CSS file for custom styling
+import io from 'socket.io-client';
+import { useParams } from 'react-router-dom';
+import { useAuth } from '../../provider/auth';
+import { message} from 'antd';
+const socket = io('http://localhost:5050');
 
 const ChatPage = () => {
-  const [message, setMessage] = useState('');
+  const { id } = useParams();
+  const [messageText, setMessageText] = useState('');
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
+  const [messageApi, contextHolder] = message.useMessage();
+  const auth = useAuth();
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -13,23 +21,35 @@ const ChatPage = () => {
     }
   };
 
+  useEffect(()=>{
+    socket.emit('join', auth.user?._id);
+  },[])
+
   useEffect(() => {
+    socket.on(auth.user?._id, (message) => {
+      messageApi.info(message.content)
+      setMessages([...messages, message])
+    });
     scrollToBottom();
-  }, [messages]);
+  }, [messages, id, auth.user?._id]);
 
   const sendMessage = () => {
-    if (message.trim() !== '') {
+    if (messageText.trim() !== '') {
       const newMessage = {
-        content: message,
-        sender: 'me', // Assume current user is sending the message
+        content: messageText,
+        sender: auth.user?._id,
+        receiver: id,
+        // Assume current user is sending the message
       };
+      socket.emit('message', newMessage);
       setMessages([...messages, newMessage]);
-      setMessage('');
+      setMessageText('');
     }
   };
 
   return (
     <div className="chat-container">
+      {contextHolder}
       <List
         className="message-list"
         itemLayout="horizontal"
@@ -47,8 +67,8 @@ const ChatPage = () => {
       <div ref={messagesEndRef} />
       <div className="input-container">
         <Input
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={messageText}
+          onChange={(e) => setMessageText(e.target.value)}
           onPressEnter={sendMessage}
           placeholder="Type your message..."
         />
