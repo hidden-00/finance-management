@@ -6,7 +6,7 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('site') || "");
-    const urlAPI = `https://5pyzfz-5050.csb.app/`;
+    const urlAPI = `https://5pyzfz-5050.csb.app`;
     // const urlAPI = `http://localhost:5050`;
     const navigate = useNavigate();
 
