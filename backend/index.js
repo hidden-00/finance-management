@@ -9,7 +9,6 @@ const port = process.env.PORT || 5050;
 const env = process.env.ENV || 'Development';
 const app_name = process.env.APP_NAME || 'Finance Management Server';
 
-require('dotenv').config()
 const express = require('express')
 const logger = require('morgan')
 const bodyParser = require('body-parser')

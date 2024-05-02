@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../provider/auth';
 import { message} from 'antd';
-const socket = io('http://localhost:5050');
+const socket = io('https://5pyzfz-5050.csb.app');
 
 const ChatPage = () => {
   const { id } = useParams();
