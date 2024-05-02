@@ -131,8 +131,13 @@ io.on("connection", (socket) => {
   socket.on("message", async (data) => {
     try {
       const message = new messageModel(data);
-      const newMessage = (await message.save()).populate('sender receiver');
-      socket.to(newMessage.receiver._id).emit('message', newMessage);
+      const newMessage = await message.save();
+      const populateMessage = await newMessage.populate([
+        {path: 'sender', select: 'name'},
+        {path: 'receiver', select: 'name'}
+      ]);
+      // console.log(populateMessage.receiver._id.toString());
+      socket.to(populateMessage.receiver._id.toString()).emit('message', populateMessage);
     } catch (err) {
       console.error('Error sending message:', err);
     }
