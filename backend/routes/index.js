@@ -10,4 +10,7 @@ router.use('/finance', financeRoutes);
 const groupRoutes = require('./group.routes')
 router.use('/group', groupRoutes);
 
+const messageRoutes = require('./message.routes');
+router.use('/chat', messageRoutes);
+
 module.exports = router

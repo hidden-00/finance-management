@@ -78,7 +78,7 @@ const ChatPage = () => {
         renderItem={(msg, index) => (
           <List.Item>
             <List.Item.Meta
-              avatar={<Avatar src={msg.sender === 'me' ? '/avatar_me.png' : '/avatar_other.png'} />}
+              avatar={<Avatar src={msg.sender === auth.user?._id ? '/avatar_me.png' : '/avatar_other.png'} />}
               title={msg.sender === 'me' ? 'You' : 'Other Person'}
               description={msg.content}
             />

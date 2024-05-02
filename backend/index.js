@@ -131,8 +131,8 @@ io.on("connection", (socket) => {
   socket.on("message", async (data) => {
     try {
       const message = new messageModel(data);
-      await message.save();
-      socket.to(data.receiver).emit('message', data);
+      const newMessage = (await message.save()).populate('sender receiver');
+      socket.to(newMessage.receiver._id).emit('message', newMessage);
     } catch (err) {
       console.error('Error sending message:', err);
     }
