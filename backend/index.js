@@ -42,7 +42,7 @@ if (cluster.isPrimary) {
 
   const server = http.createServer(app);
   app.set('PORT_NUMBER', port);
-  app.use(cors());
+  // app.use(cors());
 
   //  Start the app on the specific interface (and port).
   server.listen(port, () => {
