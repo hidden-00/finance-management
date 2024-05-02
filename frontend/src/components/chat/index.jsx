@@ -4,16 +4,28 @@ import './ChatApp.css'; // Import CSS file for custom styling
 import io from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../provider/auth';
-import { message} from 'antd';
-const socket = io('https://5pyzfz-5050.csb.app');
 
 const ChatPage = () => {
   const { id } = useParams();
   const [messageText, setMessageText] = useState('');
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
-  const [messageApi, contextHolder] = message.useMessage();
   const auth = useAuth();
+  const [urlReady, setUrlReady] = useState(false);
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    if (!auth.urlAPI) return;
+
+    const newSocket = io(auth.urlAPI);
+    setSocket(newSocket);
+
+    return () => {
+      if (newSocket) {
+        newSocket.disconnect();
+      }
+    };
+  }, [auth.urlAPI]);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -22,13 +34,26 @@ const ChatPage = () => {
   };
 
   useEffect(() => {
+    if (!socket || !urlReady) return;
+
     socket.on('message', (message) => {
-      console.log(message)
-      setMessages([...messages, message])
+      console.log(message);
+      setMessages([...messages, message]);
     });
+
     socket.emit('join', auth.user?._id);
     scrollToBottom();
-  }, [auth, messageApi, messages]);
+
+    return () => {
+      socket.off('message');
+    };
+  }, [socket, auth.user?._id, messages, urlReady]);
+
+  useEffect(() => {
+    if (auth.urlAPI) {
+      setUrlReady(true);
+    }
+  }, [auth.urlAPI]);
 
   const sendMessage = () => {
     if (messageText.trim() !== '') {
@@ -38,7 +63,7 @@ const ChatPage = () => {
         receiver: id,
         // Assume current user is sending the message
       };
-      socket.emit('message', newMessage);
+      socket?.emit('message', newMessage);
       setMessages([...messages, newMessage]);
       setMessageText('');
     }
@@ -46,7 +71,6 @@ const ChatPage = () => {
 
   return (
     <div className="chat-container">
-      {contextHolder}
       <List
         className="message-list"
         itemLayout="horizontal"

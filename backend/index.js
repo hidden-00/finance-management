@@ -62,9 +62,6 @@ app.use(function (req, res, next) {
 });
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
-// app.get("/", (req, res) => {
-//   res.send("Hello world");
-// });
 app.get('/api/v1', (req, res) => {
   res.send("Welcome to Finance API")
 })
@@ -122,7 +119,12 @@ process.on('SIGTERM', () => {
   });
 });
 
-const io = new Server(server);
+const io = new Server(server,{
+  cors: {
+    origin: "*", // Cho phép tất cả các origin
+    methods: ["GET", "POST"] // Cho phép các phương thức GET và POST
+  }
+});
 
 io.on("connection", (socket) => {
   console.log('New client connected');
@@ -136,7 +138,6 @@ io.on("connection", (socket) => {
     }
   });
   socket.on('join', (userId) => {
-    // Khi một người dùng tham gia vào phòng chat, họ sẽ tham gia vào một room có tên là userId của họ
     socket.join(userId);
   });
   socket.on('disconnect', () => {
