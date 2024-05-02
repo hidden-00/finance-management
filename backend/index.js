@@ -4,6 +4,7 @@ require('dotenv').config();
 const http = require('http');
 const app = require('./app');
 const cluster = require('node:cluster');
+const cors = require('cors');
 const numCPUs = require('node:os').availableParallelism();
 const process = require('node:process');
 const { setupMaster, setupWorker } = require("@socket.io/sticky");
@@ -41,6 +42,7 @@ if (cluster.isPrimary) {
 
   const server = http.createServer(app);
   app.set('PORT_NUMBER', port);
+  app.use(cors());
 
   //  Start the app on the specific interface (and port).
   server.listen(port, () => {
@@ -80,7 +82,7 @@ if (cluster.isPrimary) {
       try {
         const message = new messageModel(data);
         await message.save();
-        socket.to(message.receiver).emit(data);
+        socket.to(data.receiver).emit('message',data);
       } catch (err) {
         console.error('Error sending message:', err);
       }

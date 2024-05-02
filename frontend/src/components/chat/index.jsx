@@ -21,17 +21,14 @@ const ChatPage = () => {
     }
   };
 
-  useEffect(()=>{
-    socket.emit('join', auth.user?._id);
-  },[])
-
   useEffect(() => {
-    socket.on(auth.user?._id, (message) => {
-      messageApi.info(message.content)
+    socket.on('message', (message) => {
+      console.log(message)
       setMessages([...messages, message])
     });
+    socket.emit('join', auth.user?._id);
     scrollToBottom();
-  }, [messages, id, auth.user?._id]);
+  }, [auth, messageApi, messages]);
 
   const sendMessage = () => {
     if (messageText.trim() !== '') {
