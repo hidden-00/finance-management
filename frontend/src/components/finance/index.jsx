@@ -75,14 +75,14 @@ const Finance = () => {
         messageApi.info(res.msg || res.errors?.name);
         setTimeout(() => {
           navigate('/group');
-        }, 2000);
+        }, 500);
       }
       setLoad(false);
     } catch (err) {
       messageApi.error('SERVER ERROR');
       setTimeout(() => {
         setLoad(false);
-      }, 1000);
+      }, 500);
     }
   }, [auth.urlAPI, auth.token, id, messageApi, navigate])
 
@@ -136,7 +136,7 @@ const Finance = () => {
       }
       setTimeout(() => {
         setConfirmLoading(false);
-      }, 1000);
+      }, 500);
     } catch (err) {
       navigate('/server-error')
     }
@@ -192,7 +192,7 @@ const Finance = () => {
       messageApi.error('SERVER ERROR');
       setTimeout(() => {
         setLoad(false);
-      }, 1000);
+      }, 500);
     }
   };
   const cancel = (e) => {
@@ -222,7 +222,7 @@ const Finance = () => {
           messageApi.success(res.msg)
           setTimeout(() => {
             setLoadButton(false);
-          }, 1000);
+          }, 500);
         }
       }, 500);
     } catch (err) {
@@ -250,7 +250,7 @@ const Finance = () => {
           messageApi.success(res.msg)
           setTimeout(() => {
             navigate('/group');
-          }, 1000);
+          }, 500);
         }
       }, 500);
     } catch (err) {
@@ -278,7 +278,7 @@ const Finance = () => {
           messageApi.success(res.msg)
           setTimeout(() => {
             navigate('/group');
-          }, 1000);
+          }, 500);
         }
       }, 500);
     } catch (err) {

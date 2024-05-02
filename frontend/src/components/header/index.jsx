@@ -70,7 +70,7 @@ const AdminLayout = ({ children }) => {
           messageApi.success(res.msg)
           setTimeout(() => {
             window.location.reload();
-          }, 1000);
+          }, 500);
         }
       }, 500);
     } catch (err) {
@@ -152,12 +152,12 @@ const AdminLayout = ({ children }) => {
                       auth.setToken('')
                       localStorage.removeItem('site')
                       navigate('/login')
-                    }, 1000);
+                    }, 500);
                   } else {
                     messageApi.error(res.msg)
                     setTimeout(() => {
                       setLoad(false);
-                    }, 1000);
+                    }, 500);
                   }
                 } catch (err) {
                   setTimeout(() => {

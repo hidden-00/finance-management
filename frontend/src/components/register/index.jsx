@@ -36,7 +36,7 @@ const Register = () => {
                     messageApi.success(res.msg)
                     setTimeout(() => {
                         navigate('/login');
-                    }, 1000);
+                    }, 500);
                 }
             }, 500);
         } catch (err) {

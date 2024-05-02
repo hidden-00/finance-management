@@ -39,7 +39,7 @@ const ListGroup = () => {
             console.error(err);
             setTimeout(() => {
                 setLoad(false);
-            }, 1000);
+            }, 500);
         }
     }, [auth.urlAPI, auth.token, messageApi])
 
@@ -72,7 +72,7 @@ const ListGroup = () => {
                     messageApi.success(res.msg)
                     setTimeout(() => {
                         setLoadButton(false);
-                    }, 1000);
+                    }, 500);
                 }
             }, 500);
         } catch (err) {
