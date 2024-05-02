@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Input, Button, List, Avatar } from 'antd';
+import { Input, Button, List, Avatar, Spin, message } from 'antd';
 import './ChatApp.css'; // Import CSS file for custom styling
 import io from 'socket.io-client';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../provider/auth';
+import { useCallback } from 'react';
 
 const ChatPage = () => {
   const { id } = useParams();
@@ -13,8 +14,34 @@ const ChatPage = () => {
   const auth = useAuth();
   const [urlReady, setUrlReady] = useState(false);
   const [socket, setSocket] = useState(null);
+  const [load, setLoad] = useState(false);
+  const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const handleGetHistory = useCallback(async () => {
+    try {
+      setLoad(true);
+      const response = await fetch(`${auth.urlAPI}/api/v1/chat/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth.token
+        }
+      });
+      const res = await response.json();
+      if (res.success) {
+        setMessages(res.data);
+      } else {
+        messageApi.info(res.msg);
+      }
+      setLoad(false);
+    } catch (err) {
+      navigate('/server-error');
+    }
+  },[auth.urlAPI, messageApi, id, auth.token, navigate])
 
   useEffect(() => {
+    handleGetHistory();
     if (!auth.urlAPI) return;
 
     const newSocket = io(auth.urlAPI);
@@ -25,7 +52,7 @@ const ChatPage = () => {
         newSocket.disconnect();
       }
     };
-  }, [auth.urlAPI]);
+  }, [auth.urlAPI, handleGetHistory]);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -71,6 +98,8 @@ const ChatPage = () => {
 
   return (
     <div className="chat-container">
+      {contextHolder}
+      <Spin spinning={load} fullscreen />
       <List
         className="message-list"
         itemLayout="horizontal"
@@ -79,7 +108,7 @@ const ChatPage = () => {
           <List.Item>
             <List.Item.Meta
               avatar={<Avatar src={msg.sender?._id === auth.user?._id ? '/avatar_me.png' : '/avatar_other.png'} />}
-              title={(msg.sender?._id === auth.user?._id || msg.sender ===auth.user?._id) ? auth.user.name : msg.sender.name}
+              title={(msg.sender?._id === auth.user?._id || msg.sender === auth.user?._id) ? auth.user.name : msg.sender.name}
               description={msg.content}
             />
           </List.Item>
