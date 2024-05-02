@@ -1,0 +1,20 @@
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Set height to full screen */
+  }
+  
+  .message-list {
+    flex: 1; /* Let the message list take remaining space */
+    overflow-y: auto; /* Add scroll if overflow */
+  }
+  
+  .input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    position: sticky;
+    bottom: 0; /* Stick to the bottom */
+  }
+  

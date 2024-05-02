@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { Input, Layout, Menu, Modal, Spin, Typography, message } from 'antd';
-import { BookOutlined, HomeOutlined, MoneyCollectOutlined, GlobalOutlined, LinuxOutlined, WechatWorkOutlined, LogoutOutlined } from '@ant-design/icons';
+import { BookOutlined, HomeOutlined, MoneyCollectOutlined, GlobalOutlined, WechatWorkOutlined, LogoutOutlined } from '@ant-design/icons';
 import './AdminLayout.css'; // Import file CSS tùy chỉnh
 import { useState } from 'react';
 import MenuItem from 'antd/es/menu/MenuItem';
@@ -18,7 +18,7 @@ const AdminLayout = ({ children }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [input, setInput] = useState({
     name: "",
-    description: "",
+    description: ""
   })
   const [select, setSelect] = useState('');
   const [open, setOpen] = useState(false);
@@ -117,11 +117,12 @@ const AdminLayout = ({ children }) => {
                 <Menu.Item key="egg">Egg</Menu.Item>
                 <Menu.Item key="cvc">CVC</Menu.Item>
               </SubMenu> */}
-              <SubMenu key="chat" icon={<WechatWorkOutlined />} title="Chat">
-                <Menu.Item key="addChat"
-                  onClick={showModal}
-                >Create Chat</Menu.Item>
-              </SubMenu>
+              <MenuItem key="chat" icon={<WechatWorkOutlined />}
+                onClick={() => {
+                  navigate('/chat');
+                }}>
+                Chat
+              </MenuItem>
               <MenuItem
                 icon={<BookOutlined />}
                 key='blog'

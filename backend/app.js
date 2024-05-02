@@ -43,6 +43,8 @@ async function MongoDBConnection() {
     return null;
 }
 
+
+
 app.use(function (req, res, next) {
     req.client_ip_address = requestIp.getClientIp(req);
     res.header('Access-Control-Allow-Origin', '*');
@@ -52,10 +54,15 @@ app.use(function (req, res, next) {
 });
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
+// app.get("/", (req, res) => {
+//   res.send("Hello world");
+// });
 app.get('/api/v1', (req, res)=>{
   res.send("Welcome to Finance API")
 })
 const api_v1 = require('./routes/index');
+// Handle HTTP Requests
+
 app.use('/api/v1', api_v1)
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

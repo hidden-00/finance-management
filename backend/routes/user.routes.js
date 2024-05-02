@@ -6,6 +6,7 @@ const loginlogController = require('../controllers/loginlog.controller');
 const router = express.Router();
 
 router.post('/', validateUser.sanitizeRegister, validateUser.validateRegisterInput, UserController.createOne)
+// router.get('/get_id', auth.authentication, UserController.getIdByEmail);
 router.get('/info', auth.authentication, UserController.getMe);
 router.get('/logs', auth.authentication, loginlogController.getAll);
 router.get('/', auth.authentication, UserController.getAll)

@@ -9,6 +9,8 @@ import Finance from './components/finance';
 import ListGroup from './components/finance/listGroup';
 import Error500 from './components/error/Error500';
 import Invite from './components/invite';
+import ListChat from './components/chat/listUser';
+import ChatPage from './components/chat';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
             <Route path='/invite' element={<Invite/>}/>
             <Route element={<PrivateRoute />}>
               <Route path="/feature" element={<Feature />} />
+              <Route path='/chat' element={<ListChat/>}/>
+              <Route path='/chat/:id' element={<ChatPage/>}/>
               <Route path='/group' element={<ListGroup />} />
               <Route path='/group/:id' element={<Finance />} />
             </Route>
