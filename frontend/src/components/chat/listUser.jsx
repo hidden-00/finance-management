@@ -43,7 +43,7 @@ const ListChat = () => {
     return (
         <>
             {contextHolder}
-            <Helmet><title>Finances</title></Helmet>
+            <Helmet><title>Chat</title></Helmet>
             <Spin spinning={load} fullscreen />
             <Row gutter={16}>
                 {users?.map((user) => user?._id !== auth.user?._id ? (
