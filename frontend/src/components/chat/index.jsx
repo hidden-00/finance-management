@@ -5,6 +5,7 @@ import io from 'socket.io-client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../provider/auth';
 import { useCallback } from 'react';
+import moment from 'moment'
 
 const ChatPage = () => {
   const { id } = useParams();
@@ -109,7 +110,7 @@ const ChatPage = () => {
             <List.Item.Meta
               avatar={<Avatar src={msg.sender?._id === auth.user?._id ? '/avatar_me.png' : '/avatar_other.png'} />}
               title={(msg.sender?._id === auth.user?._id || msg.sender === auth.user?._id) ? auth.user.name : msg.sender.name}
-              description={msg.content}
+              description={`${msg.content} - ${moment(msg.timestamp).format('HH:mm')}`}
             />
           </List.Item>
         )}
